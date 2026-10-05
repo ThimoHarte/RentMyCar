@@ -1,0 +1,146 @@
+@startuml domain-class-diagram
+title Domein-klassendiagram - Rent my car
+
+skinparam nodesep 60
+skinparam ranksep 50
+skinparam shadowing false
+hide empty members
+
+class User {
+  + id: Int {readOnly}
+  + name: String
+  + email: String
+  + passwordHash: String
+  + bonusPoints: Int
+}
+
+abstract class Car <<sealed>> {
+  + id: Int {readOnly}
+  + owner: User {readOnly}
+  + brand: String
+  + model: String
+  + year: Int
+  + licensePlate: String
+  + seats: Int
+  + hourlyRate: Double
+  + kmRate: Double
+  + purchasePrice: Double
+  + address: Address
+  + photos: List<Photo>
+  + {abstract} costPerKm(): Double
+  + {abstract} fixedCostsPerYear(): Double
+  + tco(): Double
+}
+
+note right of Car::tco
+  tco = purchasePrice x 15%
+      + fixedCostsPerYear()
+      + 15.000 km x costPerKm()
+  Works for every kind of car,
+  because each subclass has its own
+  costPerKm() and fixedCostsPerYear().
+end note
+
+class IceCar {
+  + fuelType: FuelType
+  + litersPer100Km: Double
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
+
+class ElectricCar {
+  + kWhPer100Km: Double
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
+
+class HydrogenCar {
+  + kgPer100Km: Double
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  LPG
+  + pricePerLiter: Double
+}
+
+class Address <<data>> {
+  + street: String
+  + houseNumber: String
+  + postalCode: String
+  + city: String
+}
+
+class Photo {
+  + id: Int {readOnly}
+  + fileName: String
+}
+
+class Reservation {
+  + id: Int {readOnly}
+  + car: Car {readOnly}
+  + renter: User {readOnly}
+  + start: LocalDateTime {readOnly}
+  + end: LocalDateTime {readOnly}
+  + expectedKm: Int {readOnly}
+  + status: ReservationStatus {readOnly}
+  + hours(): Double
+  + estimatedPrice(): Double
+  + overlapsWith(other: Reservation): Boolean
+  + approve()
+  + reject()
+  + cancel(now: LocalDateTime)
+}
+
+note right of Reservation::status
+  Only changes through approve(),
+  reject() and cancel().
+  These functions check the rules.
+end note
+
+note bottom of Reservation
+  Rules checked when a reservation is made:
+  - end is after start
+  - at least 1 hour
+end note
+
+enum ReservationStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+class CostAssumptions <<object>> {
+  + KM_PER_YEAR: Int = 15000
+  + DEPRECIATION_RATE: Double = 0.15
+  + ELECTRICITY_PRICE: Double
+  + HYDROGEN_PRICE: Double
+  + fixed costs per kind of car
+}
+
+' Inheritance: three kinds of cars
+Car <|-- IceCar
+Car <|-- ElectricCar
+Car <|-- HydrogenCar
+
+' Composition: address and photos belong to one car
+Car *-- "1" Address
+Car *-- "photos 0..*" Photo
+
+' Associations
+Car "0..*" --> "owner 1" User
+Reservation "0..*" --> "car 1" Car
+Reservation "0..*" --> "renter 1" User
+Reservation --> "status 1" ReservationStatus
+IceCar --> "fuelType 1" FuelType
+
+' Dependency: the cars use the fixed values
+IceCar ..> CostAssumptions
+ElectricCar ..> CostAssumptions
+HydrogenCar ..> CostAssumptions
+
+@enduml

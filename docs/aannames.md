@@ -1,6 +1,6 @@
 # Aannames
 
-In dit document staan de vaste waarden en formules die de applicatie gebruikt voor de berekeningen. Prijzen veranderen; de waarden hieronder gelden op de peildatum. In de code staan ze op één plek, zodat ze makkelijk kunnen worden aangepast.
+In dit document staan de vaste waarden en formules die de applicatie gebruikt voor de berekeningen. Prijzen veranderen; de waarden hieronder gelden op de peildatum. In de code staan ze centraal: de brandstofprijzen in de enum `FuelType` en de overige waarden in het object `CostAssumptions` (zie hoofdstuk 2), zodat ze makkelijk kunnen worden aangepast.
 
 Peildatum: 5 oktober 2026.
 

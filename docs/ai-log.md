@@ -74,6 +74,16 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Mijn beslissing:** ik vertrouw de opgezochte bronnen; de rekenvoorbeelden worden later ook gebruikt als testgevallen.
 - **Nog te doen:** zelf een paar bronnen openen en controleren.
 
+### 2026-10-05 – Domein-klassendiagram (hoofdstuk 2.1 en 2.2)
+- **Doel:** het domeinmodel ontwerpen: de klassen, hun relaties en de gebruikte OO-concepten.
+- **Wat de AI deed:** een voorstel gedaan voor de klassen en relaties; na mijn akkoord het klassendiagram (PlantUML) en de toelichting geschreven.
+- **Wat ik vroeg en controleerde:**
+  - Ik vroeg om uitleg bij twee ontwerpkeuzes: waar de interface komt en waar de overlapcontrole zit.
+  - Ik vroeg of de voorstellen uit het lesmateriaal komen. De AI liet per onderdeel de bron zien (les 3, 6 en 7, de HousingMarket-workshop, de demo van de docent) en gaf aan welke keuze een eigen ontwerpkeuze is (`overlapsWith()` in `Reservation`).
+  - Ik vroeg wat "domein" betekent en of het woord "repository" klopt. Beide begrippen zijn toegevoegd aan het begin van hoofdstuk 2.
+- **Mijn beslissingen:** interfaces bij de repositories (hoofdstuk 3) en niet geforceerd in het domein; de regel voor overlap in `Reservation`, het opzoeken in de service.
+- **Nog te checken bij de docent:** of de interfaces in het implementatie-klassendiagram voldoende zijn voor de eis "klassendiagram met overerving, interfaces en abstracte class".
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.
