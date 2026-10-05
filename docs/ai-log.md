@@ -36,7 +36,7 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
   - Huurprijs = uurtarief × uren + km-tarief × km (eigen keuze voor combinatie uur + km).
   - Kosten per km = verbruik per 100 km × energieprijs ÷ 100; aannames voor energieprijzen door de AI voorgesteld.
   - TCO per jaar bij 15.000 km: afschrijving, verzekering, wegenbelasting, onderhoud en energie. Ik wist niet wat TCO was; de AI heeft het uitgelegd en een eenvoudige formule voorgesteld.
-- **Hoe ik het controleerde:** nog te doen: de aangenomen prijzen en bedragen controleren met een paar actuele bronnen en vastleggen in `aannames.md`.
+- **Hoe ik het controleerde:** de AI ging eerst uit van geschatte prijzen (bijvoorbeeld € 2,00 per liter benzine). Bij het opstellen van `aannames.md` zijn de prijzen opgezocht in actuele bronnen; zie de notitie "Aannames en bronnen".
 
 ### 2026-10-05 – Documentatie-opzet
 - **Doel:** bepalen hoe ik het ontwikkeldocument en de UML-diagrammen maak.
@@ -62,6 +62,17 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
   - **Goedkeuren:** ik heb toegevoegd dat de eigenaar niet twee aanvragen voor dezelfde periode mag kunnen goedkeuren.
 - **Mijn beslissingen:** geen beheerder; een bezoeker mag zoeken zonder in te loggen; annuleren mag tot de start; een auto met toekomstige reserveringen mag niet worden verwijderd; filters op soort, plaats, maximale uurprijs en periode; alleen goedgekeurde reserveringen maken een auto bezet.
 - **Les:** AI-voorstellen klinken logisch, maar ik moet zelf nagaan of ze kloppen met de casus en met de praktijk.
+
+### 2026-10-05 – Aannames en bronnen
+- **Doel:** de vaste waarden voor de berekeningen (energieprijzen, TCO-bedragen) onderbouwen met bronnen.
+- **Wat ik vroeg:** actuele prijzen opzoeken en `aannames.md` opstellen.
+- **Wat de AI deed:** via webzoekopdrachten prijzen gezocht bij o.a. ANWB, hoeveelbenzine.nl, joulo.nl en evtrader.com, en het document met formules en rekenvoorbeelden geschreven.
+- **Wat opviel:**
+  - De eerdere schattingen van de AI waren te laag: benzine is € 2,42 per liter en niet € 2,00. Zonder bronnen te controleren was dat er zo in gekomen.
+  - Twee zoekresultaten gaven verschillende benzineprijzen (€ 2,71 en € 2,47). De AI heeft dat gecontroleerd bij de ANWB zelf. Het verschil zat tussen de adviesprijs en de gemiddelde pompprijs.
+  - Voor de verzekering en het onderhoud van een waterstofauto is geen betrouwbare bron gevonden. Die bedragen staan als "schatting" in het document.
+- **Mijn beslissing:** ik vertrouw de opgezochte bronnen; de rekenvoorbeelden worden later ook gebruikt als testgevallen.
+- **Nog te doen:** zelf een paar bronnen openen en controleren.
 
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
