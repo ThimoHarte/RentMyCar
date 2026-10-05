@@ -1,0 +1,77 @@
+' Shared style for all diagrams of Rent my car
+
+skinparam shadowing false
+skinparam roundCorner 12
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 13
+skinparam defaultFontColor #1E293B
+skinparam backgroundColor #FFFFFF
+skinparam nodesep 50
+skinparam ranksep 60
+
+skinparam title {
+  FontSize 18
+  FontStyle bold
+  FontColor #0F172A
+}
+
+skinparam arrow {
+  Color #475569
+  Thickness 1.3
+  FontSize 12
+  FontColor #334155
+}
+
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  BorderThickness 1.2
+  HeaderBackgroundColor #E0E7FF
+  FontStyle bold
+  AttributeFontSize 12
+  StereotypeFontColor #4338CA
+  StereotypeFontSize 11
+}
+
+skinparam class<<enum>> {
+  HeaderBackgroundColor #DCFCE7
+}
+
+skinparam class<<object>> {
+  HeaderBackgroundColor #FEF3C7
+}
+
+skinparam class<<data>> {
+  HeaderBackgroundColor #F1F5F9
+}
+
+skinparam note {
+  BackgroundColor #FFFBEB
+  BorderColor #F59E0B
+  FontSize 12
+}
+
+skinparam package {
+  BackgroundColor #F8FAFC
+  BorderColor #94A3B8
+  FontStyle bold
+  FontColor #334155
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #94A3B8
+  FontStyle plain
+}
+
+skinparam actor {
+  BackgroundColor #E0E7FF
+  BorderColor #4338CA
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #EEF2FF
+  BorderColor #6366F1
+  FontSize 12
+}

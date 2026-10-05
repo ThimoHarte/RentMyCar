@@ -1,0 +1,62 @@
+@startuml package-diagram
+!include style.iuml
+
+title Packagediagram – Rent my car
+
+skinparam packageStyle folder
+skinparam linetype polyline
+
+package "server (module)" as serverModule {
+
+  package "rentmycar.server" as root {
+    rectangle "Server.kt · Application.kt · Dependencies.kt\n<i>start de server en koppelt alle features</i>" as boot
+  }
+
+  package "rentmycar.server.reservations" as reservations {
+    rectangle "ReservationRoutes\nReservationService\nReservationRepository\n<b>Reservation</b>" as reservationsContent
+  }
+
+  package "rentmycar.server.cars" as cars {
+    rectangle "CarRoutes\nCarService\nCarRepository\n<b>Car</b>, <b>IceCar</b>, <b>ElectricCar</b>,\n<b>HydrogenCar</b>, <b>Address</b>, <b>Photo</b>" as carsContent
+  }
+
+  package "rentmycar.server.users" as users {
+    rectangle "UserRoutes\nUserService\nUserRepository\n<b>User</b>" as usersContent
+  }
+
+  package "rentmycar.server.common" as common {
+    rectangle "Foutafhandeling (StatusPages)\nDatabase-setup\nCostAssumptions" as commonContent
+  }
+}
+
+package "core (module)" as coreModule {
+  package "rentmycar.core" as core {
+    rectangle "DTO's (request en response)\nEnums: FuelType, ReservationStatus" as coreContent
+  }
+}
+
+' Layout: start on top, the three features next to each other, shared parts below
+root -[hidden]down- cars
+reservations -[hidden]right- cars
+cars -[hidden]right- users
+cars -[hidden]down- common
+
+' A reservation has a car and a renter; a car has an owner
+reservations ..> cars
+cars ..> users
+reservations ..> users
+
+' The features use the shared parts
+reservations ..> common
+cars ..> common
+users ..> common
+
+' The server sends and receives the shared data classes
+serverModule ..> coreModule
+
+legend bottom
+  Stippellijn = "gebruikt". <b>Vetgedrukt</b> = domeinklasse.
+  rentmycar.server kent alle features (niet getekend om het diagram overzichtelijk te houden).
+endlegend
+
+@enduml

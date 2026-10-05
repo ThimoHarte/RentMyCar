@@ -58,9 +58,11 @@ Het project is aangemaakt met de Kotlin Multiplatform-wizard ([kmp.jetbrains.com
 | Module | Doel | Periode |
 |---|---|---|
 | `server` | De Web API, gebouwd met Ktor | 1 |
-| `core` | Gedeelde code voor server en app, zoals de datamodellen die via de API worden verstuurd | 1 en 2 |
+| `core` | Gedeelde code voor server en app: de DTO's (de gegevens die via de API worden verstuurd) en de enums | 1 en 2 |
 | `app/shared` | De gebruikersinterface (Compose) en de logica van de app | 2 |
 | `app/androidApp` | De Android-app zelf | 2 |
+
+De packages in de code beginnen met `rentmycar`, bijvoorbeeld `rentmycar.server.cars` en `rentmycar.core` (zie hoofdstuk 2.3).
 
 Ik heb voor deze opzet gekozen omdat de server en de app dezelfde datamodellen uit `core` gebruiken. Als ik een veld toevoeg of wijzig, geldt dat direct voor beide kanten. Dat voorkomt verschillen tussen wat de API verstuurt en wat de app verwacht.
 

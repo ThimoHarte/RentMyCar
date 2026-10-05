@@ -1,9 +1,10 @@
 @startuml use-case-diagram
-title Use case diagram - Rent my car (Web API)
+!include style.iuml
+
+title Use case diagram – Rent my car (Web API)
 
 left to right direction
 skinparam packageStyle rectangle
-skinparam shadowing false
 skinparam actorStyle awesome
 
 actor "Bezoeker" as Visitor
@@ -17,7 +18,7 @@ Visitor <|-- User
 User <|-- Owner
 User <|-- Renter
 
-rectangle "Rent my car" {
+rectangle "<b>Rent my car</b>" {
 
     package "Account" {
         usecase "UC-01 Account aanmaken" as UC01
@@ -49,15 +50,12 @@ rectangle "Rent my car" {
     }
 }
 
-note bottom of Owner
-  Eigenaar en huurder zijn rollen
-  van dezelfde gebruiker.
-end note
-
 Visitor --> UC01
 Visitor --> UC02
 Visitor --> UC08
 Visitor --> UC09
+
+User --> UC14
 
 Owner --> UC03
 Owner --> UC04
@@ -70,6 +68,11 @@ Renter --> UC10
 Renter --> UC12
 Renter --> UC13
 
-User --> UC14
+legend right
+  <b>Eigenaar</b> en <b>huurder</b> zijn rollen
+  van dezelfde gebruiker.
+  Een gebruiker kan alles wat
+  een bezoeker kan.
+endlegend
 
 @enduml

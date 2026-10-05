@@ -1,0 +1,33 @@
+@startuml architecture
+!include style.iuml
+
+title Architectuur – lagen binnen een feature
+
+skinparam linetype polyline
+skinparam componentStyle rectangle
+
+rectangle "<b>Client</b>\nIntelliJ .http-bestand, later de Android-app" as client #FFFFFF
+
+rectangle "<b>Ktor-server</b>" {
+  rectangle "<b>Plugins</b>\nJSON · JWT-authenticatie · foutafhandeling (StatusPages)" as plugins #FEF3C7
+
+  rectangle "<b>Routes</b>\nontvangt het verzoek en stuurt een antwoord\n(HTTP, statuscodes, DTO's)" as routes #E0E7FF
+  rectangle "<b>Service</b>\nvoert een use case uit: regels toepassen\nen de stappen coördineren" as service #E0E7FF
+  rectangle "<b>Domein</b>\nCar, Reservation, User\n+ de regels (bijv. overlapsWith)" as domain #DCFCE7
+  rectangle "<b>«interface» Repository</b>\nopslaan en ophalen" as repo #E0E7FF
+  rectangle "<b>ExposedRepository</b>\necht, met de database" as exposed #F1F5F9
+  rectangle "<b>FakeRepository</b>\nalleen in tests" as fake #F1F5F9
+}
+
+database "H2-database" as db #F1F5F9
+
+client -down-> plugins : HTTP + JSON
+plugins -down-> routes
+routes -down-> service
+service -right-> domain : gebruikt
+service -down-> repo
+exposed -up-|> repo
+fake -up-|> repo
+exposed -down-> db
+
+@enduml

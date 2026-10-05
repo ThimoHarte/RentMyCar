@@ -84,6 +84,18 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Mijn beslissingen:** interfaces bij de repositories (hoofdstuk 3) en niet geforceerd in het domein; de regel voor overlap in `Reservation`, het opzoeken in de service.
 - **Nog te checken bij de docent:** of de interfaces in het implementatie-klassendiagram voldoende zijn voor de eis "klassendiagram met overerving, interfaces en abstracte class".
 
+### 2026-10-05 – Diagrammen als plaatje en een gezamenlijke stijl
+- **Doel:** de PlantUML-diagrammen als SVG in het document tonen, met een mooiere en modernere stijl.
+- **Wat de AI deed:** de officiële PlantUML-tool gebruikt (met de Java die al op mijn pc stond) om de `.puml`-bestanden naar SVG te exporteren. Daarna een gezamenlijk stijlbestand gemaakt (`docs/puml/style.iuml`), de plaatjes bekeken en de indeling aangepast waar tekst over elkaar heen stond.
+- **Wat ik vroeg:** de diagrammen mooier en moderner maken, met de tekst beter op zijn plek.
+- **Beperking:** zonder de tekenmotor Graphviz is de indeling niet altijd perfect; een label in het klassendiagram staat nog dicht tegen een klasse aan.
+
+### 2026-10-05 – Architectuur en packages (hoofdstuk 2.3 en 3.1)
+- **Doel:** bepalen hoe de code wordt ingedeeld.
+- **Wat de AI deed:** het architectuurlesmateriaal van de gastdocent gelezen (`nomisRev/avans-toolchain-and-ktor-2026`) en een voorstel gedaan: indeling per feature met daarbinnen routes, service en repository; geen framework voor dependency injection; DTO's en enums in de gedeelde module `core`; package-naam `rentmycar`. Na mijn akkoord het packagediagram, het architectuurdiagram en de tekst geschreven.
+- **Mijn eis:** de AI moet steeds aangeven waar een keuze afwijkt van de les, de docent of de gastdocent. Dat staat nu in een tabel in hoofdstuk 3.1. Afwijkingen: geen Koin (wel aanbevolen op Brightspace), en de domeinklassen staan in de server in plaats van in de gedeelde module (anders dan in de demo van de docent).
+- **Gevolg voor eerdere keuzes:** de brandstofprijs is verplaatst van de enum `FuelType` naar `CostAssumptions`, omdat `FuelType` naar de gedeelde module gaat en de app de prijzen niet nodig heeft. Hoofdstuk 2, het klassendiagram en `aannames.md` zijn hierop aangepast.
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.

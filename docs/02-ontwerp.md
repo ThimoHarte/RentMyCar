@@ -36,11 +36,11 @@ De functie `tco()` staat één keer in `Car` en gebruikt deze twee functies. Daa
 
 | Klasse | Eigen gegevens | Kosten per km |
 |---|---|---|
-| `IceCar` | `fuelType`, `litersPer100Km` | liters per 100 km × prijs van de brandstofsoort ÷ 100 |
+| `IceCar` | `fuelType`, `litersPer100Km` | liters per 100 km × literprijs van de brandstofsoort ÷ 100 |
 | `ElectricCar` | `kWhPer100Km` | kWh per 100 km × stroomprijs ÷ 100 |
 | `HydrogenCar` | `kgPer100Km` | kg per 100 km × waterstofprijs ÷ 100 |
 
-**`FuelType`** is een *enum* met de drie brandstofsoorten van een ICE-auto. Elke soort heeft zijn eigen prijs per liter.
+**`FuelType`** is een *enum* met de drie brandstofsoorten van een ICE-auto. De enum staat in de gedeelde module `core`, omdat de app in periode 2 ook moet weten welke brandstofsoorten er zijn. De prijzen staan niet in de enum maar in `CostAssumptions`, omdat de app die niet nodig heeft.
 
 **`Address`** is het adres waar de auto staat. Het is een *data class*: het bevat alleen gegevens.
 
@@ -54,7 +54,7 @@ De functie `tco()` staat één keer in `Car` en gebruikt deze twee functies. Daa
 
 **`ReservationStatus`** is een *enum* met de vier statussen van een reservering.
 
-**`CostAssumptions`** is een *object* (er bestaat er maar één van) met de vaste waarden uit `aannames.md`, zoals het aantal kilometers per jaar, het afschrijvingspercentage en de stroom- en waterstofprijs.
+**`CostAssumptions`** is een *object* (er bestaat er maar één van) met alle vaste waarden uit `aannames.md`: het aantal kilometers per jaar, het afschrijvingspercentage, de prijzen van brandstof, stroom en waterstof, en de vaste kosten per soort auto.
 
 ## 2.2 Toelichting op de OO-keuzes
 
@@ -67,7 +67,7 @@ De functie `tco()` staat één keer in `Car` en gebruikt deze twee functies. Daa
 | **Polymorfisme** | `costPerKm()` en `fixedCostsPerYear()` | Overal in de code wordt dezelfde functie aangeroepen; elke soort auto voert zijn eigen versie uit. `tco()` hoeft niet te weten welke soort auto het is. |
 | **Compositie** | `Car` ◆ `Address` en `Car` ◆ `Photo` | Een adres en foto's horen bij precies één auto en bestaan niet zonder die auto. Wordt de auto verwijderd, dan verdwijnen ze ook. |
 | **Associatie** | `Car` → `User` (eigenaar), `Reservation` → `Car` en `Reservation` → `User` (huurder) | Deze objecten bestaan los van elkaar. Een gebruiker blijft bestaan als zijn auto wordt verwijderd. |
-| **Enum** | `FuelType`, `ReservationStatus` | Een vaste, kleine lijst mogelijkheden. `FuelType` heeft per soort een eigen prijs. |
+| **Enum** | `FuelType`, `ReservationStatus` | Een vaste, kleine lijst mogelijkheden. |
 | **Object (singleton)** | `CostAssumptions` | Alle vaste getallen staan op één plek. Als een prijs verandert, hoeft dat maar op één plek te worden aangepast. |
 | **Encapsulatie** | De status van `Reservation` | De status kan alleen veranderen via `approve()`, `reject()` en `cancel()`. Die functies controleren eerst of de overgang mag. Zo kan een afgewezen reservering bijvoorbeeld nooit meer worden goedgekeurd. |
 | **Data class** | `Address` | Een klasse die alleen gegevens bevat. Kotlin maakt automatisch onder andere `equals()` en `toString()`. |
@@ -91,7 +91,31 @@ In het domeinmodel staat geen interface. Er is in het domein geen onderdeel waar
 Bedragen worden opgeslagen als `Double`. Dat is eenvoudig, maar kan kleine afrondingsverschillen geven (bijvoorbeeld € 0,1452 in plaats van € 0,15). Bij het tonen van bedragen worden ze daarom afgerond op twee decimalen. Voor een echte betaalapplicatie zou een type zonder afrondingsfouten nodig zijn; omdat er in deze applicatie geen echte betalingen zijn, is `Double` voldoende.
 
 ## 2.3 Packagediagram
-_Nog in te vullen._
+
+![Packagediagram](images/package-diagram.svg)
+
+Bron: [`puml/package-diagram.puml`](puml/package-diagram.puml)
+
+De code van de server is ingedeeld **per feature**: elk onderdeel van de casus heeft een eigen package. Binnen elke feature staan dezelfde lagen: routes, service en repository (zie hoofdstuk 3.1).
+
+| Package | Inhoud |
+|---|---|
+| `rentmycar.server` | Het starten van de server (`Server.kt`), het installeren van de plugins en het koppelen van de routes (`Application.kt`), en het aanmaken van alle services en repositories (`Dependencies.kt`). |
+| `rentmycar.server.users` | Gebruikers: registreren, inloggen en het domeinobject `User`. |
+| `rentmycar.server.cars` | Auto's: aanbieden, zoeken, wijzigen, verwijderen, foto's, en de domeinklassen `Car`, `IceCar`, `ElectricCar`, `HydrogenCar`, `Address` en `Photo`. |
+| `rentmycar.server.reservations` | Reserveringen: aanvragen, goedkeuren, afwijzen, annuleren, en het domeinobject `Reservation`. |
+| `rentmycar.server.common` | Onderdelen die alle features gebruiken: de foutafhandeling, het opzetten van de database en `CostAssumptions`. |
+| `rentmycar.core` | De gedeelde module met de DTO's en de enums `FuelType` en `ReservationStatus`. |
+
+**Afhankelijkheden:**
+- `reservations` gebruikt `cars` en `users`, omdat een reservering een auto en een huurder heeft;
+- `cars` gebruikt `users`, omdat een auto een eigenaar heeft;
+- `users` gebruikt geen andere feature. Er zijn dus geen kringen: de afhankelijkheden lopen maar één kant op;
+- alle features gebruiken `common` en de gedeelde module `core`.
+
+**Wat staat in `core` en wat in `server`?**
+- In `core` staan alleen de **DTO's** (*Data Transfer Objects*: de gegevens die als JSON tussen de app en de server worden verstuurd) en de **enums**. De Android-app gebruikt in periode 2 precies dezelfde klassen. Zo kunnen de app en de server niet van elkaar verschillen.
+- De **domeinklassen** met hun regels en berekeningen staan in `server`. De regels worden alleen op de server uitgevoerd; de app krijgt de uitkomsten via de DTO's.
 
 ## 2.4 Entiteit-relatiediagram (ERD)
 _Nog in te vullen._

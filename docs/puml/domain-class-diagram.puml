@@ -1,10 +1,36 @@
 @startuml domain-class-diagram
-title Domein-klassendiagram - Rent my car
+!include style.iuml
 
-skinparam nodesep 60
-skinparam ranksep 50
-skinparam shadowing false
+title Domein-klassendiagram – Rent my car
+
+hide circle
 hide empty members
+skinparam linetype polyline
+skinparam nodesep 90
+
+class Reservation {
+  + id: Int {readOnly}
+  + car: Car {readOnly}
+  + renter: User {readOnly}
+  + start: LocalDateTime {readOnly}
+  + end: LocalDateTime {readOnly}
+  + expectedKm: Int {readOnly}
+  + status: ReservationStatus {readOnly}
+  --
+  + hours(): Double
+  + estimatedPrice(): Double
+  + overlapsWith(other: Reservation): Boolean
+  + approve()
+  + reject()
+  + cancel(now: LocalDateTime)
+}
+
+enum ReservationStatus <<enum>> {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
 
 class User {
   + id: Int {readOnly}
@@ -27,44 +53,10 @@ abstract class Car <<sealed>> {
   + purchasePrice: Double
   + address: Address
   + photos: List<Photo>
+  --
   + {abstract} costPerKm(): Double
   + {abstract} fixedCostsPerYear(): Double
   + tco(): Double
-}
-
-note right of Car::tco
-  tco = purchasePrice x 15%
-      + fixedCostsPerYear()
-      + 15.000 km x costPerKm()
-  Works for every kind of car,
-  because each subclass has its own
-  costPerKm() and fixedCostsPerYear().
-end note
-
-class IceCar {
-  + fuelType: FuelType
-  + litersPer100Km: Double
-  + costPerKm(): Double
-  + fixedCostsPerYear(): Double
-}
-
-class ElectricCar {
-  + kWhPer100Km: Double
-  + costPerKm(): Double
-  + fixedCostsPerYear(): Double
-}
-
-class HydrogenCar {
-  + kgPer100Km: Double
-  + costPerKm(): Double
-  + fixedCostsPerYear(): Double
-}
-
-enum FuelType {
-  PETROL
-  DIESEL
-  LPG
-  + pricePerLiter: Double
 }
 
 class Address <<data>> {
@@ -79,68 +71,64 @@ class Photo {
   + fileName: String
 }
 
-class Reservation {
-  + id: Int {readOnly}
-  + car: Car {readOnly}
-  + renter: User {readOnly}
-  + start: LocalDateTime {readOnly}
-  + end: LocalDateTime {readOnly}
-  + expectedKm: Int {readOnly}
-  + status: ReservationStatus {readOnly}
-  + hours(): Double
-  + estimatedPrice(): Double
-  + overlapsWith(other: Reservation): Boolean
-  + approve()
-  + reject()
-  + cancel(now: LocalDateTime)
+class IceCar {
+  + fuelType: FuelType
+  + litersPer100Km: Double
+  --
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
 }
 
-note right of Reservation::status
-  Only changes through approve(),
-  reject() and cancel().
-  These functions check the rules.
-end note
+class ElectricCar {
+  + kWhPer100Km: Double
+  --
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
 
-note bottom of Reservation
-  Rules checked when a reservation is made:
-  - end is after start
-  - at least 1 hour
-end note
+class HydrogenCar {
+  + kgPer100Km: Double
+  --
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
 
-enum ReservationStatus {
-  REQUESTED
-  APPROVED
-  REJECTED
-  CANCELLED
+enum FuelType <<enum>> {
+  PETROL
+  DIESEL
+  LPG
 }
 
 class CostAssumptions <<object>> {
-  + KM_PER_YEAR: Int = 15000
-  + DEPRECIATION_RATE: Double = 0.15
-  + ELECTRICITY_PRICE: Double
-  + HYDROGEN_PRICE: Double
+  + KM_PER_YEAR = 15000
+  + DEPRECIATION_RATE = 0.15
+  + fuel prices per liter
+  + electricity price per kWh
+  + hydrogen price per kg
   + fixed costs per kind of car
 }
 
-' Inheritance: three kinds of cars
-Car <|-- IceCar
-Car <|-- ElectricCar
-Car <|-- HydrogenCar
+' Layout: reservation on top, car in the middle, subclasses below
+Reservation -right-> "status 1" ReservationStatus
+Reservation "0..*" -down-> "car 1" Car
+Reservation "0..*" -down-> "renter 1" User
+Car "0..*" -left-> "owner 1" User
 
 ' Composition: address and photos belong to one car
-Car *-- "1" Address
-Car *-- "photos 0..*" Photo
+Car *-right- "address 1" Address
+Car *-right- "photos 0..*" Photo
+Address -[hidden]down- Photo
 
-' Associations
-Car "0..*" --> "owner 1" User
-Reservation "0..*" --> "car 1" Car
-Reservation "0..*" --> "renter 1" User
-Reservation --> "status 1" ReservationStatus
-IceCar --> "fuelType 1" FuelType
+' Inheritance: three kinds of cars
+Car <|-down- IceCar
+Car <|-down- ElectricCar
+Car <|-down- HydrogenCar
 
-' Dependency: the cars use the fixed values
-IceCar ..> CostAssumptions
-ElectricCar ..> CostAssumptions
-HydrogenCar ..> CostAssumptions
+IceCar -down-> "fuelType 1" FuelType
+
+' The cars use the fixed values for their calculations
+IceCar .down.> CostAssumptions
+ElectricCar .down.> CostAssumptions
+HydrogenCar .down.> CostAssumptions
 
 @enduml
