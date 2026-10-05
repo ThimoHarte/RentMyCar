@@ -30,22 +30,24 @@ Een huurder kan auto's zoeken en filteren, bijvoorbeeld op afstand of prijs, en 
 De casus is groot. Daarom maak ik onderscheid tussen wat in de backend (periode 1) komt en wat pas in de app (periode 2) wordt uitgewerkt.
 
 **Wel in de backend (periode 1):**
-- auto's beheren: toevoegen, bekijken, zoeken en filteren, wijzigen en verwijderen;
+- auto's beheren: toevoegen, bekijken, zoeken en filteren (op soort, plaats, prijs en beschikbaarheid), wijzigen en verwijderen;
 - de kosten per kilometer en de TCO berekenen;
 - gebruikers registreren en laten inloggen;
-- reserveringen maken, met controle dat twee reserveringen van dezelfde auto niet overlappen;
+- reserveringen aanvragen, die de eigenaar goedkeurt of afwijst, met controle dat een auto niet twee keer voor dezelfde periode wordt verhuurd;
 - foto's van een auto uploaden;
 - een AI-agent die een deel van de functionaliteit uitvoert (de precieze invulling volgt; het taalmodel draait lokaal en is gratis).
 
 **Pas in periode 2 (Android-app):**
-- auto's tonen op een kaart;
+- de plek van de auto op een kaart aanwijzen en auto's tonen op een kaart;
+- zoeken op afstand (hiervoor zijn coördinaten nodig, die in periode 2 via de kaart worden vastgelegd);
 - de looproute naar de auto;
 - het meten van rijgedrag met de sensoren van de telefoon en het toekennen van bonuspunten.
 
 De backend krijgt voor deze onderdelen alleen wat nodig is om de gegevens op te slaan en op te vragen.
 
 **Buiten scope:**
-- echte betalingen.
+- echte betalingen;
+- een digitale controle van identiteit of rijbewijs. De eigenaar controleert het rijbewijs zelf bij de sleuteloverdracht (zie hoofdstuk 1).
 
 ## 0.4 Technische opzet en projectstructuur
 

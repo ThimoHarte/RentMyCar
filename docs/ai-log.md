@@ -53,6 +53,16 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Opslag:** ik vroeg wat "Exposed en H2" betekent. De AI legde drie opties uit (lijst in het geheugen, H2, PostgreSQL) en stelde voor eerst in het geheugen te werken en daarna over te stappen op Exposed met H2.
 - **Mijn beslissing:** ik wil echt een database gebruiken (Exposed + H2), omdat we in de opleiding met databases hebben gewerkt en het assessment vraagt naar de vertaling tussen OO en het relationele model. De tussenstap in het geheugen mag, maar mag ook worden overgeslagen als het een kleine stap is.
 
+### 2026-10-05 – Analyse (hoofdstuk 1)
+- **Doel:** eisen, rollen, gegevens, user stories, permissiematrix en use cases bepalen.
+- **Wat de AI deed:** vragen gesteld over de casus en een voorstel gedaan voor de inhoud van hoofdstuk 1; na mijn akkoord het hoofdstuk en het use case diagram (PlantUML) uitgeschreven.
+- **Waar ik het AI-voorstel heb verbeterd:**
+  - **Locatie:** de AI stelde coördinaten voor, die de app via GPS zou invullen. Ik merkte op dat dat fout gaat als je de advertentie niet bij de auto maakt (bijvoorbeeld op je werk). Besluit: in periode 1 alleen een adres en zoeken op plaatsnaam; coördinaten en zoeken op afstand in periode 2 via de kaart.
+  - **Sleuteloverdracht:** de AI stelde "ophaalinstructies" voor, zoals een kluiscode. Ik vroeg waar dat vandaan kwam en hoe je weet wie de huurder is. De AI gaf toe dat het een eigen idee was en niet in de casus stond. Besluit: werken zoals SnappCar: de huurder vraagt aan, de eigenaar keurt goed of af en controleert het rijbewijs bij de overdracht.
+  - **Goedkeuren:** ik heb toegevoegd dat de eigenaar niet twee aanvragen voor dezelfde periode mag kunnen goedkeuren.
+- **Mijn beslissingen:** geen beheerder; een bezoeker mag zoeken zonder in te loggen; annuleren mag tot de start; een auto met toekomstige reserveringen mag niet worden verwijderd; filters op soort, plaats, maximale uurprijs en periode; alleen goedgekeurde reserveringen maken een auto bezet.
+- **Les:** AI-voorstellen klinken logisch, maar ik moet zelf nagaan of ze kloppen met de casus en met de praktijk.
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.
