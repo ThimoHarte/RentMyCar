@@ -96,6 +96,15 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Mijn eis:** de AI moet steeds aangeven waar een keuze afwijkt van de les, de docent of de gastdocent. Dat staat nu in een tabel in hoofdstuk 3.1. Afwijkingen: geen Koin (wel aanbevolen op Brightspace), en de domeinklassen staan in de server in plaats van in de gedeelde module (anders dan in de demo van de docent).
 - **Gevolg voor eerdere keuzes:** de brandstofprijs is verplaatst van de enum `FuelType` naar `CostAssumptions`, omdat `FuelType` naar de gedeelde module gaat en de app de prijzen niet nodig heeft. Hoofdstuk 2, het klassendiagram en `aannames.md` zijn hierop aangepast.
 
+### 2026-10-05 – ERD en databasemodel (hoofdstuk 2.4 en 2.5)
+- **Doel:** bepalen hoe het OO-model in databasetabellen wordt opgeslagen.
+- **Wat de AI voorstelde:** drie manieren om overerving in tabellen op te slaan (één tabel, een tabel per soort met een gedeelde tabel, een losse tabel per soort), met voor- en nadelen. De AI gaf aan dat dit niet uit het lesmateriaal komt maar uit het boek van Martin Fowler.
+- **Mijn beslissingen:**
+  - Overerving in één tabel (optie A), omdat dit het eenvoudigst is.
+  - **Auto's niet echt verwijderen maar op "niet actief" zetten.** De AI adviseerde om oude reserveringen mee te verwijderen omdat dat eenvoudiger is. Ik heb gekozen voor soft delete, omdat ik vorig jaar heb geleerd dat niet echt verwijderen vaak beter is: zo blijft de geschiedenis bewaard.
+  - De huurprijs wordt bij het aanvragen vastgelegd (advies van de AI overgenomen), zodat een latere tariefwijziging een bestaande reservering niet verandert.
+- **Gevolgen:** de analyse (FE-06, FE-13, nieuwe paragraaf "Verwijderen van een auto") en het klassendiagram (`isActive`, `deactivate()`, `rentalPrice()`, `estimatedPrice` als vast gegeven) zijn aangepast.
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.

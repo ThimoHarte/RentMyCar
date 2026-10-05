@@ -1,0 +1,46 @@
+@startuml erd
+!include style.iuml
+
+title ERD – Rent my car
+
+hide circle
+hide empty members
+skinparam linetype ortho
+
+entity "Gebruiker" as User {
+  naam
+  e-mailadres
+  bonuspunten
+}
+
+entity "Auto" as Car {
+  soort: ICE, BEV of FCEV
+  merk, model, kenteken
+  tarieven
+  adres
+  actief
+}
+
+entity "Foto" as Photo {
+  bestandsnaam
+}
+
+entity "Reservering" as Reservation {
+  start- en eindmoment
+  verwachte km
+  geschatte prijs
+  status
+}
+
+User ||--o{ Car : "biedt aan\n(eigenaar)"
+User ||--o{ Reservation : "vraagt aan\n(huurder)"
+Car ||--o{ Reservation : "wordt gereserveerd in"
+Car ||--o{ Photo : "heeft"
+
+legend right
+  <b>Kraaienpoot-notatie</b>
+  ||  precies één
+  o{  nul of meer
+endlegend
+
+@enduml

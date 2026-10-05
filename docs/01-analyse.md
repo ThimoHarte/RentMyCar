@@ -11,14 +11,14 @@ In dit hoofdstuk staat wat de applicatie moet kunnen. De eisen komen uit de casu
 | FE-03 | Een gebruiker kan een auto aanbieden met gegevens, adres en tarieven. |
 | FE-04 | Er zijn drie soorten auto's: ICE (brandstof), BEV (elektrisch met accu) en FCEV (waterstof). Ze hebben gedeelde gegevens en gedeelde functionaliteit. |
 | FE-05 | De eigenaar kan zijn auto wijzigen. |
-| FE-06 | De eigenaar kan zijn auto verwijderen, zolang er geen aangevraagde of goedgekeurde reserveringen in de toekomst zijn. |
+| FE-06 | De eigenaar kan zijn auto verwijderen, zolang er geen aangevraagde of goedgekeurde reserveringen in de toekomst zijn. De auto wordt niet echt verwijderd, maar op "niet actief" gezet, zodat oude reserveringen bewaard blijven. |
 | FE-07 | De eigenaar kan foto's toevoegen aan zijn auto en weer verwijderen. |
 | FE-08 | De eigenaar kan de kosten per kilometer van zijn auto laten berekenen. De berekening verschilt per soort auto. |
 | FE-09 | De eigenaar kan de TCO (totale kosten per jaar) van zijn auto laten berekenen, uitgaande van 15.000 km per jaar. |
 | FE-10 | Iedereen kan een lijst met auto's bekijken en zoeken en filteren op soort auto, plaats, maximale uurprijs en beschikbaarheid in een periode. |
 | FE-11 | Iedereen kan de details van een auto bekijken, inclusief foto's. |
 | FE-12 | Een gebruiker kan een reservering aanvragen voor een auto van een ander, met een start- en eindmoment en het verwachte aantal kilometers. |
-| FE-13 | Bij een aanvraag ziet de huurder de geschatte huurprijs: uurtarief × aantal uren + km-tarief × verwachte kilometers. |
+| FE-13 | Bij een aanvraag ziet de huurder de geschatte huurprijs: uurtarief × aantal uren + km-tarief × verwachte kilometers. Deze prijs wordt bij het aanvragen vastgelegd en verandert niet als de eigenaar later zijn tarieven aanpast. |
 | FE-14 | De eigenaar kan een aanvraag goedkeuren of afwijzen. |
 | FE-15 | Een aanvraag kan alleen worden goedgekeurd als de auto in die periode niet al is verhuurd (geen overlap met een andere goedgekeurde reservering). |
 | FE-16 | De huurder kan een reservering annuleren zolang de huurperiode nog niet is begonnen. |
@@ -71,6 +71,7 @@ Eigenaar en huurder zijn geen aparte accounts. Eén gebruiker kan beide rollen h
 - uurtarief en km-tarief
 - adres: straat, huisnummer, postcode, plaats
 - aanschafprijs (nodig voor de TCO)
+- actief of niet actief (een verwijderde auto wordt op "niet actief" gezet)
 - eigenaar
 - foto's
 
@@ -87,7 +88,7 @@ Eigenaar en huurder zijn geen aparte accounts. Eén gebruiker kan beide rollen h
 - startmoment en eindmoment
 - verwacht aantal kilometers
 - status: `AANGEVRAAGD`, `GOEDGEKEURD`, `AFGEWEZEN` of `GEANNULEERD`
-- geschatte huurprijs (wordt berekend)
+- geschatte huurprijs (wordt bij het aanvragen berekend en vastgelegd)
 
 De vaste getallen die nodig zijn voor de berekeningen, zoals energieprijzen en de bedragen voor de TCO, staan in `aannames.md`.
 
@@ -108,6 +109,14 @@ AANGEVRAAGD ──────────────────────�
 - Goedkeuren wordt geweigerd als er al een goedgekeurde reservering voor dezelfde auto is die overlapt.
 - Annuleren kan bij `AANGEVRAAGD` en `GOEDGEKEURD`, zolang het startmoment nog niet is bereikt.
 - `AFGEWEZEN` en `GEANNULEERD` zijn eindtoestanden.
+
+### Verwijderen van een auto
+
+Een auto wordt niet echt uit de database verwijderd, maar op "niet actief" gezet (*soft delete*). Een niet-actieve auto:
+- verschijnt niet meer in de zoekresultaten;
+- kan niet meer worden gereserveerd of gewijzigd.
+
+De oude reserveringen van de auto blijven zo bewaard, zodat een huurder zijn eerdere reserveringen kan blijven zien. Deze werkwijze heb ik in het eerste studiejaar geleerd bij het werken met databases.
 
 ### Sleuteloverdracht
 
@@ -221,7 +230,7 @@ Hieronder zijn de belangrijkste use cases volledig uitgeschreven.
 |---|---|
 | **Actor** | Bezoeker (of gebruiker) |
 | **Voorwaarde** | Geen. |
-| **Hoofdscenario** | 1. De bezoeker vult optioneel filters in: soort auto, plaats, maximale uurprijs en een periode. <br> 2. Het systeem zoekt de auto's die aan alle ingevulde filters voldoen. Bij een periode vallen auto's af die dan al een goedgekeurde reservering hebben. <br> 3. Het systeem geeft de lijst met auto's terug. |
+| **Hoofdscenario** | 1. De bezoeker vult optioneel filters in: soort auto, plaats, maximale uurprijs en een periode. <br> 2. Het systeem zoekt de actieve auto's die aan alle ingevulde filters voldoen. Bij een periode vallen auto's af die dan al een goedgekeurde reservering hebben. <br> 3. Het systeem geeft de lijst met auto's terug. |
 | **Alternatief** | 2a. Er zijn geen auto's die voldoen: het systeem geeft een lege lijst terug. <br> 2b. Een filter is ongeldig (bijvoorbeeld een periode waarvan het einde vóór het begin ligt): het systeem geeft een foutmelding (400). |
 | **Resultaat** | De bezoeker ziet de auto's die aan zijn wensen voldoen. |
 

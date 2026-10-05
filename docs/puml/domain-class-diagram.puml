@@ -15,10 +15,10 @@ class Reservation {
   + start: LocalDateTime {readOnly}
   + end: LocalDateTime {readOnly}
   + expectedKm: Int {readOnly}
+  + estimatedPrice: Double {readOnly}
   + status: ReservationStatus {readOnly}
   --
   + hours(): Double
-  + estimatedPrice(): Double
   + overlapsWith(other: Reservation): Boolean
   + approve()
   + reject()
@@ -53,10 +53,13 @@ abstract class Car <<sealed>> {
   + purchasePrice: Double
   + address: Address
   + photos: List<Photo>
+  + isActive: Boolean
   --
   + {abstract} costPerKm(): Double
   + {abstract} fixedCostsPerYear(): Double
   + tco(): Double
+  + rentalPrice(hours: Double, km: Int): Double
+  + deactivate()
 }
 
 class Address <<data>> {
