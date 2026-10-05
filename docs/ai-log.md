@@ -46,6 +46,13 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Mijn beslissing:** het beste van beide: losse hoofdstukken die aansluiten op de portfolio-checklist van Brightspace, en diagrammen volgens de methode van de docent (`.puml` in `docs/puml/`, geëxporteerd naar `.svg`).
 - **Les:** een AI-voorstel vergelijken met hoe de docent het zelf doet, gaf een betere en beter te onderbouwen keuze.
 
+### 2026-10-05 – Inleiding en keuze voor opslag
+- **Doel:** hoofdstuk 0 (inleiding) schrijven en bepalen hoe de gegevens worden opgeslagen.
+- **Wat de AI deed:** een voorstel gedaan voor de inhoud van de inleiding; na mijn akkoord de tekst uitgeschreven.
+- **Wat ik aanpaste:** de beschrijving van de projectstructuur gecorrigeerd. De AI ging uit van de wizard-link met iOS, maar ik had in de wizard alleen Android en Server gekozen.
+- **Opslag:** ik vroeg wat "Exposed en H2" betekent. De AI legde drie opties uit (lijst in het geheugen, H2, PostgreSQL) en stelde voor eerst in het geheugen te werken en daarna over te stappen op Exposed met H2.
+- **Mijn beslissing:** ik wil echt een database gebruiken (Exposed + H2), omdat we in de opleiding met databases hebben gewerkt en het assessment vraagt naar de vertaling tussen OO en het relationele model. De tussenstap in het geheugen mag, maar mag ook worden overgeslagen als het een kleine stap is.
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.
