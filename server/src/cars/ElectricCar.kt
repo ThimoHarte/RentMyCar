@@ -17,6 +17,7 @@ class electricCar(
     purchasePrice: Double,
     address: Address,
     photos: List<Photo> = emptyList(),
+    val kWhPer100Km: Double,
 ) : Car(
     id, owner, brand, model, year, licensePlate, seats,
     hourlyRate, kmRate, purchasePrice, address, photos

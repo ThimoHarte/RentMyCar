@@ -17,6 +17,7 @@ class hydrogenCar(
     purchasePrice: Double,
     address: Address,
     photos: List<Photo> = emptyList(),
+    kgPer100Km: Double,
 ) : Car(
     id, owner, brand, model, year, licensePlate, seats,
     hourlyRate, kmRate, purchasePrice, address, photos
