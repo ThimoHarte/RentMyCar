@@ -147,6 +147,13 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
   - alle diagrammen opnieuw als SVG gemaakt en als plaatje bekeken.
 - **Wat niet werkte:** ELK maakte het use case diagram veel te breed en onleesbaar; daar is de oude tekenmotor gebleven. Een nieuwe instelling voor de breedte van klassen zette de namen van de actoren scheef; die is weer weggehaald.
 
+### 2026-10-06 – Teststrategie (hoofdstuk 4)
+- **Doel:** vóór het programmeren vastleggen welke tests er komen, zodat ze bij elke stap meteen worden gemaakt.
+- **Wat de AI deed:** de testles van de gastdocent (ktor-fundamentals les 8) en de tests van de docent (`ExposedRepositoriesTest.kt`, `.http`-flows) bekeken, en een voorstel gedaan: de testpiramide, 13 unit tests, 11 integratietests, `.http`-flows per soort gebruiker en een testrapport met alle endpoints.
+- **Afwijkingen die de AI meldde:** `kotlin.test` in plaats van Kotest (gastdocent), H2 in het geheugen in plaats van Testcontainers, en geen dekkingspercentage.
+- **Mijn beslissingen:** akkoord met de hoeveelheid tests (de tests met ✱ eerst), met `kotlin.test` en H2, en met een testrapport dat na het bouwen wordt ingevuld.
+- **Nog te doen:** de AI kan helpen testgevallen te bedenken, maar ik controleer zelf of de verwachte uitkomsten kloppen (bijvoorbeeld door de rekenvoorbeelden na te rekenen).
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.

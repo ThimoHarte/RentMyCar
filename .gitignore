@@ -19,3 +19,6 @@ xcuserdata
 *.mv.db
 uploads/
 .env
+
+# Personal AI assistant instructions (not part of the project)
+CLAUDE.md
