@@ -154,6 +154,17 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Mijn beslissingen:** akkoord met de hoeveelheid tests (de tests met ✱ eerst), met `kotlin.test` en H2, en met een testrapport dat na het bouwen wordt ingevuld.
 - **Nog te doen:** de AI kan helpen testgevallen te bedenken, maar ik controleer zelf of de verwachte uitkomsten kloppen (bijvoorbeeld door de rekenvoorbeelden na te rekenen).
 
+### 2026-10-06 – Eerste code: enums en eenvoudige domeinklassen (branch `feature/domain-classes`)
+- **Werkwijze:** de AI legt in de chat uit hoe iets gemaakt wordt; ik typ de code zelf. Bij het eerste bestand (`FuelType`) heeft de AI een voorbeeld gegeven; `ReservationStatus`, `Address`, `Photo` en `User` heb ik zelf geschreven. De AI heeft alleen de lege bestanden met de package-regel aangemaakt.
+- **Wat de AI uitlegde:** wat een enum is, het verschil tussen `class` en `data class` (structural en referential equality, `toString()`, `copy()`), en het verschil tussen `val` en `var`.
+- **Fouten die ik maakte en die de AI vond bij het controleren:**
+  - code uit de terminal gekopieerd, waardoor er onzichtbare tekens (`│` en tekst van het terminalvenster) in `FuelType.kt` stonden;
+  - `string` en `int` met een kleine letter; types beginnen in Kotlin met een hoofdletter;
+  - `Photo` en `User` als `data class` gemaakt; het moeten gewone klassen zijn, omdat ze een eigen `id` hebben en omdat de `toString()` van een data class het wachtwoord-hash zou tonen;
+  - in `User` alles `val`, terwijl naam, e-mail, wachtwoord-hash en bonuspunten moeten kunnen veranderen.
+- **Aanpassing ontwerp:** `fileName` van `Photo` is in het klassendiagram `{readOnly}` geworden, omdat een bestandsnaam nooit verandert.
+- **Ook gevonden:** het bouwen van de Android-kant van `core` vraagt om het accepteren van de Android SDK-licenties; tot die tijd wordt alleen de server-kant gebouwd (`-p jvm`).
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.

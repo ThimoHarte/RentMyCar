@@ -73,7 +73,7 @@ class Address <<data>> {
 
 class Photo {
   + id: Int {readOnly}
-  + fileName: String
+  + fileName: String {readOnly}
 }
 
 class IceCar {
