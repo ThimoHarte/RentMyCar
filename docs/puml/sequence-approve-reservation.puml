@@ -1,0 +1,79 @@
+@startuml sequence-approve-reservation
+!include style.iuml
+
+title Sequence diagram – Aanvraag goedkeuren (UC-11)
+
+autonumber
+hide footbox
+
+actor "Client\n(owner)" as client
+participant "Authentication\n(plugin)" as auth
+participant "ReservationRoutes" as routes
+participant "ReservationService" as service
+participant "ReservationRepository" as repo <<repository>>
+participant "request:\nReservation" as request <<domain>>
+
+client -> auth : PATCH /api/reservations/12/status\nAuthorization: Bearer <token>\n{ "status": "APPROVED" }
+note right of auth : Bij een ongeldig token: 401\n(zie "Auto aanbieden")
+auth -> routes : request + userId from token
+activate routes
+routes -> service : changeStatus(12, APPROVED, userId, now)
+activate service
+
+service -> repo : findById(12)
+activate repo
+repo --> service : Reservation?
+deactivate repo
+
+alt reservering niet gevonden
+  service --> routes : NotFoundException
+  routes --> client : 404 Not Found
+else gebruiker is niet de eigenaar van de auto
+  service --> routes : ForbiddenException
+  routes --> client : 403 Forbidden
+else gebruiker is de eigenaar
+  service -> repo : findApprovedForCar(request.car.id)
+  activate repo
+  repo --> service : approved: List<Reservation>
+  deactivate repo
+
+  service -> service : approved.any { it.overlapsWith(request) }
+  note right
+    overlapsWith() staat in Reservation:
+    start < other.end && other.start < end
+  end note
+
+  alt overlap met een goedgekeurde reservering
+    service --> routes : ConflictException
+    routes --> client : 409 Conflict\n{ "message": "This car is already rented in this period." }
+  else geen overlap
+    service -> request : approve(now)
+    activate request
+    request -> request : check(status == REQUESTED)\ncheck(start > now)
+    alt status is niet REQUESTED of de start is voorbij
+      request --> service : IllegalStateException
+      service --> routes : IllegalStateException
+      routes --> client : 409 Conflict
+    else status en tijd kloppen
+      request -> request : status = APPROVED
+      request --> service
+      deactivate request
+      service -> repo : update(request)
+      activate repo
+      repo --> service
+      deactivate repo
+      service --> routes : reservation (APPROVED)
+      deactivate service
+      routes --> client : 200 OK\nReservationResponse (status APPROVED)
+      deactivate routes
+    end
+  end
+end
+
+note over service, repo
+  Het controleren op overlap en het opslaan gebeuren
+  in één databasetransactie, zodat er niet tegelijk
+  twee overlappende aanvragen kunnen worden goedgekeurd.
+end note
+
+@enduml

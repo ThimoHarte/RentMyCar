@@ -1,0 +1,69 @@
+@startuml sequence-create-car
+!include style.iuml
+
+title Sequence diagram – Auto aanbieden (UC-03)
+
+autonumber
+hide footbox
+
+actor "Client" as client
+participant "Authentication\n(plugin)" as auth
+participant "CarRoutes" as routes
+participant "CarService" as service
+participant "UserRepository" as users <<repository>>
+participant "CarRepository" as repo <<repository>>
+participant "car:\nElectricCar" as car <<domain>>
+
+client -> auth : POST /api/cars\nAuthorization: Bearer <token>\n{ "type": "BEV", "brand": "Tesla", ... }
+
+alt token ontbreekt, is verlopen of ongeldig
+  auth --> client : 401 Unauthorized
+else token is geldig
+  auth -> routes : request + userId from token
+  activate routes
+  routes -> service : createCar(request, userId)
+  activate service
+
+  service -> users : findById(userId)
+  activate users
+  users --> service : owner
+  deactivate users
+
+  service -> repo : existsByLicensePlate(request.licensePlate)
+  activate repo
+  repo --> service : true / false
+  deactivate repo
+
+  alt kenteken bestaat al
+    service --> routes : ConflictException
+    routes --> client : 409 Conflict\n{ "message": "This license plate is already in use." }
+  else nieuw kenteken
+    note over service
+      Het veld "type" bepaalt welke
+      klasse wordt gemaakt (when):
+      ICE → IceCar, BEV → ElectricCar,
+      FCEV → HydrogenCar
+    end note
+    service -> car ** : ElectricCar(owner, brand, ..., kWhPer100Km)
+    activate car
+    car -> car : require(hourlyRate >= 0)\nrequire(kWhPer100Km > 0)
+    alt ongeldige invoer
+      car --> service : IllegalArgumentException
+      service --> routes : IllegalArgumentException
+      routes --> client : 400 Bad Request\n{ "message": "Hourly rate cannot be negative." }
+    else invoer klopt
+      car --> service : car
+      deactivate car
+      service -> repo : add(car)
+      activate repo
+      repo --> service : car (with id)
+      deactivate repo
+      service --> routes : car
+      deactivate service
+      routes --> client : 201 Created\nCarResponse
+      deactivate routes
+    end
+  end
+end
+
+@enduml

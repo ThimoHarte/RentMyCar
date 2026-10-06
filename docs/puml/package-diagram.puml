@@ -1,7 +1,8 @@
 @startuml package-diagram
 !include style.iuml
+!pragma layout elk
 
-title Packagediagram – Rent my car
+title Packagediagram – Server en core
 
 skinparam packageStyle folder
 skinparam linetype polyline
@@ -21,17 +22,17 @@ package "server (module)" as serverModule {
   }
 
   package "rentmycar.server.users" as users {
-    rectangle "UserRoutes\nUserService\nUserRepository\n<b>User</b>" as usersContent
+    rectangle "UserRoutes\nUserService\nUserRepository\nPasswordHasher\nTokenService\n<b>User</b>" as usersContent
   }
 
   package "rentmycar.server.common" as common {
-    rectangle "Foutafhandeling (StatusPages)\nDatabase-setup\nCostAssumptions" as commonContent
+    rectangle "Foutafhandeling (StatusPages)\nForbiddenException, ConflictException\nDatabase-setup\nCostAssumptions" as commonContent
   }
 }
 
 package "core (module)" as coreModule {
   package "rentmycar.core" as core {
-    rectangle "DTO's (request en response)\nEnums: FuelType, ReservationStatus" as coreContent
+    rectangle "DTO's (request en response), ApiError\nEnums: FuelType, ReservationStatus" as coreContent
   }
 }
 

@@ -1,0 +1,67 @@
+@startuml sequence-request-reservation
+!include style.iuml
+
+title Sequence diagram – Reservering aanvragen (UC-10)
+
+autonumber
+hide footbox
+
+actor "Client" as client
+participant "Authentication\n(plugin)" as auth
+participant "ReservationRoutes" as routes
+participant "ReservationService" as service
+participant "CarRepository" as cars <<repository>>
+participant "UserRepository" as users <<repository>>
+participant "Reservation\n(companion)" as factory <<domain>>
+participant "car:\nCar" as car <<domain>>
+participant "ReservationRepository" as repo <<repository>>
+
+client -> auth : POST /api/reservations\nAuthorization: Bearer <token>\n{ carId, start, end, expectedKm }
+note right of auth : Bij een ongeldig token: 401\n(zie "Auto aanbieden")
+auth -> routes : request + userId from token
+activate routes
+routes -> service : requestReservation(request, userId, now)
+activate service
+
+service -> cars : findActiveById(carId)
+activate cars
+cars --> service : Car?
+deactivate cars
+
+alt auto niet gevonden of niet actief
+  service --> routes : NotFoundException
+  routes --> client : 404 Not Found
+else auto gevonden
+  service -> users : findById(userId)
+  activate users
+  users --> service : renter
+  deactivate users
+
+  service -> factory : request(car, renter, start, end, expectedKm, now)
+  activate factory
+  factory -> factory : require(renter is not the owner)\nrequire(start > now)\nrequire(end > start)\nrequire(at least 1 hour)
+
+  alt een regel klopt niet
+    factory --> service : IllegalArgumentException
+    service --> routes : IllegalArgumentException
+    routes --> client : 400 Bad Request\n{ "message": "A reservation must last at least 1 hour." }
+  else alle regels kloppen
+    factory -> car : rentalPrice(hours, expectedKm)
+    activate car
+    car --> factory : price\n(hours x hourlyRate + km x kmRate)
+    deactivate car
+    factory --> service : reservation\n(status REQUESTED, estimatedPrice set)
+    deactivate factory
+
+    service -> repo : add(reservation)
+    activate repo
+    repo --> service : reservation (with id)
+    deactivate repo
+    service --> routes : reservation
+    deactivate service
+    routes --> client : 201 Created\nReservationResponse with estimatedPrice
+    deactivate routes
+  end
+end
+
+@enduml

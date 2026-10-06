@@ -1,11 +1,10 @@
 @startuml use-case-diagram
 !include style.iuml
 
-title Use case diagram – Rent my car (Web API)
+title Use case diagram – Rent my car
 
 left to right direction
 skinparam packageStyle rectangle
-skinparam actorStyle awesome
 
 actor "Bezoeker" as Visitor
 actor "Gebruiker" as User
@@ -20,17 +19,17 @@ User <|-- Renter
 
 rectangle "<b>Rent my car</b>" {
 
-    package "Account" {
+    package "<b>Account</b>" {
         usecase "UC-01 Account aanmaken" as UC01
         usecase "UC-02 Inloggen" as UC02
     }
 
-    package "Auto's vinden" {
+    package "<b>Auto's vinden</b>" {
         usecase "UC-08 Auto's zoeken" as UC08
         usecase "UC-09 Auto bekijken" as UC09
     }
 
-    package "Auto's aanbieden" {
+    package "<b>Auto's aanbieden</b>" {
         usecase "UC-03 Auto aanbieden" as UC03
         usecase "UC-04 Auto wijzigen" as UC04
         usecase "UC-05 Auto verwijderen" as UC05
@@ -39,13 +38,13 @@ rectangle "<b>Rent my car</b>" {
         usecase "UC-11 Aanvraag goedkeuren\nof afwijzen" as UC11
     }
 
-    package "Auto's huren" {
+    package "<b>Auto's huren</b>" {
         usecase "UC-10 Reservering aanvragen" as UC10
         usecase "UC-12 Eigen reserveringen\nbekijken" as UC12
         usecase "UC-13 Reservering annuleren" as UC13
     }
 
-    package "AI-agent" {
+    package "<b>AI-agent</b>" {
         usecase "UC-14 Advies van de\nAI-agent vragen" as UC14
     }
 }

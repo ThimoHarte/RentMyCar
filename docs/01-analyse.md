@@ -40,12 +40,13 @@ In dit hoofdstuk staat wat de applicatie moet kunnen. De eisen komen uit de casu
 | NFE-01 | De Web API is geschreven in Kotlin met het framework Ktor. | Opdracht |
 | NFE-02 | Gegevens worden opgeslagen in een database (H2 met Exposed). Bij de start bevat de database realistische testdata. | Opdracht + eigen keuze |
 | NFE-03 | De API gebruikt JSON en geeft passende HTTP-statuscodes terug, ook bij fouten. | Opdracht (LU1) |
-| NFE-04 | Acties die een account vereisen, kunnen alleen met een geldig inlogtoken (JWT) worden uitgevoerd. | Eigen eis |
-| NFE-05 | Wachtwoorden worden niet leesbaar (gehasht) opgeslagen. | Eigen eis |
+| NFE-04 | Acties die een account vereisen, kunnen alleen met een geldig inlogtoken (JWT) worden uitgevoerd. Een token is 15 minuten geldig. | Eigen eis, OWASP en gastdocent |
+| NFE-05 | Wachtwoorden worden niet leesbaar opgeslagen, maar gehasht met Argon2id. | Eigen eis, OWASP en gastdocent |
 | NFE-06 | De broncode is in het Engels en volgt de Kotlin-conventies voor namen. Package-namen passen bij de architectuur. | Opdracht |
 | NFE-07 | Er zijn minstens 3 unit tests en 3 integratietests, en tests voor de vier soorten CRUD-requests. | Opdracht |
 | NFE-08 | De applicatie draait lokaal op mijn eigen computer. | Opdracht |
 | NFE-09 | Het taalmodel van de AI-agent draait lokaal en is gratis. | Eigen eis |
+| NFE-10 | Inloggen en registreren zijn beperkt tot 10 pogingen per minuut, tegen het raden van wachtwoorden. | OWASP, docent en gastdocent |
 
 ## 1.3 Actoren en rollen
 

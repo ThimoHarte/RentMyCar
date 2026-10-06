@@ -1,7 +1,8 @@
 @startuml domain-class-diagram
 !include style.iuml
+!pragma layout elk
 
-title Domein-klassendiagram – Rent my car
+title Klassendiagram – Domein
 
 hide circle
 hide empty members
@@ -18,9 +19,10 @@ class Reservation {
   + estimatedPrice: Double {readOnly}
   + status: ReservationStatus {readOnly}
   --
+  + {static} request(car, renter, start, end, expectedKm, now): Reservation
   + hours(): Double
   + overlapsWith(other: Reservation): Boolean
-  + approve()
+  + approve(now: LocalDateTime)
   + reject()
   + cancel(now: LocalDateTime)
 }

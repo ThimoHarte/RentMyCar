@@ -1,7 +1,8 @@
 @startuml database-model
 !include style.iuml
+!pragma layout elk
 
-title Databasemodel – Rent my car
+title Databasemodel – Tabellen
 
 hide circle
 hide empty members

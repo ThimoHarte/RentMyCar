@@ -1,5 +1,6 @@
 @startuml erd
 !include style.iuml
+!pragma layout elk
 
 title ERD – Rent my car
 
@@ -10,14 +11,18 @@ skinparam linetype ortho
 entity "Gebruiker" as User {
   naam
   e-mailadres
+  wachtwoord-hash
   bonuspunten
 }
 
 entity "Auto" as Car {
   soort: ICE, BEV of FCEV
-  merk, model, kenteken
-  tarieven
+  merk, model, bouwjaar, kenteken
+  aantal zitplaatsen
+  uurtarief en km-tarief
+  aanschafprijs
   adres
+  verbruik: per soort
   actief
 }
 

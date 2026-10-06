@@ -105,6 +105,48 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
   - De huurprijs wordt bij het aanvragen vastgelegd (advies van de AI overgenomen), zodat een latere tariefwijziging een bestaande reservering niet verandert.
 - **Gevolgen:** de analyse (FE-06, FE-13, nieuwe paragraaf "Verwijderen van een auto") en het klassendiagram (`isActive`, `deactivate()`, `rentalPrice()`, `estimatedPrice` als vast gegeven) zijn aangepast.
 
+### 2026-10-05/06 – Endpoints, foutafhandeling en beveiliging (hoofdstuk 3.2 t/m 3.4)
+- **Doel:** het API-contract vastleggen (endpoints, request/response, statuscodes) en bepalen hoe inloggen en beveiliging werken.
+- **Wat de AI deed:** de routes, StatusPages en authenticatie in de demo van de docent bekeken en een voorstel gedaan voor de endpoints, de foutafhandeling en de beveiliging.
+- **Waar ik het AI-voorstel heb laten verbeteren:** de AI stelde eerst voor: tokens 24 uur geldig, wachtwoorden met BCrypt en geen rate limiting. Ik twijfelde aan alle drie (een kort token is toch veiliger? stond er niet iets over wachtwoorden in de gastles? waarom geen rate limiting?) en vroeg om meer onderzoek naar best practices. Uitkomst:
+  - De 24 uur kwam uit een oud oefenvoorbeeld (les 6). OWASP en de gastdocent adviseren 15 minuten → aangepast.
+  - De gastdocent gebruikt Argon2id, en OWASP noemt BCrypt alleen nog voor oudere systemen → aangepast naar Argon2id.
+  - De enige reden voor geen rate limiting was "eenvoud", terwijl de docent, de gastdocent en OWASP het allemaal doen, en het maar een paar regels code is → toegevoegd.
+- **Refresh tokens:** ik vroeg wat er na 15 minuten gebeurt en of er een voorbeeld is in het lesmateriaal. De AI heeft de studiedocumenten, alle slides, de repositories van de docent en 14 repositories van de gastdocent doorzocht. Er is nergens een uitgewerkt voorbeeld; de gastdocent noemt refresh tokens wel "the usual pattern" (ktor-fundamentals les 9, in de sprekersnotities). Besluit: in periode 1 een token van 15 minuten zonder refresh token; refresh tokens gepland voor periode 2, met de Ktor-documentatie als bron.
+- **Mijn beslissingen:** de lijst met endpoints; één `PATCH .../status` voor goedkeuren, afwijzen en annuleren (zoals de docent); de beveiligingskeuzes hierboven.
+- **Les:** bij beveiliging niet het eerste AI-antwoord overnemen. Mijn eigen twijfel ("is korter niet veiliger?") klopte, en extra onderzoek leverde betere en beter onderbouwde keuzes op.
+
+### 2026-10-06 – Sequence diagrams (hoofdstuk 3.6)
+- **Doel:** laten zien hoe de onderdelen samenwerken bij de belangrijkste verzoeken.
+- **Wat de AI voorstelde:** drie sequence diagrams (inloggen, reservering aanvragen, aanvraag goedkeuren); de opdracht vraagt er minimaal 3.
+- **Mijn beslissing:** ook "auto aanbieden" toevoegen, zodat alle belangrijke flows (beveiliging, aanmaken met overerving, domeinregels en de overlapcontrole) zijn uitgewerkt. Totaal 4 diagrammen.
+- **Wat de AI deed:** de vier diagrammen gemaakt in de gezamenlijke stijl, met ook de foutpaden, en als plaatje gecontroleerd.
+- **Gevolgen voor het ontwerp:** bij het uitwerken bleken twee details nodig, die de AI heeft gemeld en verwerkt:
+  - een fabrieksfunctie `Reservation.request()` in een companion object, die de regels controleert en de prijs vastlegt;
+  - `approve(now)` krijgt de huidige tijd mee, omdat goedkeuren alleen vóór de start kan. Tijd als parameter maakt de functies ook beter testbaar.
+  - Daarnaast zijn `PasswordHasher` en `TokenService` toegevoegd aan het packagediagram.
+
+### 2026-10-06 – Controle van alle diagrammen
+- **Wat ik zag:** in het sequence diagram "Aanvraag goedkeuren" stonden Nederlandse teksten tussen de Engelse code, bijvoorbeeld `goedgekeurde reservering` en `request (of null)`.
+- **Wat ik vroeg:** controleren of de taal klopt, en voor de zekerheid alle diagrammen nalopen op juistheid en volledigheid.
+- **Afspraak voor alle diagrammen:** namen van klassen en functies, teruggegeven waarden en foutmeldingen zijn Engels (dat is code). Voorwaarden, notities, titels en legenda's zijn Nederlands (dat is uitleg in het document). Voor "of null" wordt de Kotlin-notatie gebruikt, bijvoorbeeld `User?`.
+- **Wat de AI verder vond bij de controle:**
+  - in het sequence diagram "Inloggen" had een pad geen label;
+  - in het architectuurdiagram ontbrak rate limiting bij de plugins;
+  - in het ERD ontbraken een paar gegevens uit hoofdstuk 1.4 (wachtwoord-hash, bouwjaar, zitplaatsen, aanschafprijs, verbruik);
+  - in het packagediagram ontbraken de eigen exceptions en `ApiError`.
+- Alles is aangepast en alle tien diagrammen zijn opnieuw als SVG gemaakt.
+- **Les:** een AI maakt kleine inconsistenties die je pas ziet als je het resultaat zelf goed bekijkt.
+
+### 2026-10-06 – Opmaak van de diagrammen gelijk getrokken
+- **Wat ik vroeg:** alle diagrammen nalopen op leesbaarheid, zorgen voor één gezamenlijke opmaak, geen tekst door lijnen, en waar nuttig grotere of vette tekst (maar niet alles).
+- **Wat de AI deed:**
+  - de gezamenlijke stijl aangepast: iets grotere letters, vaste regel "titels, namen en kopjes vet, gewone tekst niet", dezelfde stijl voor legenda's en actoren;
+  - alle titels in dezelfde vorm gezet: "Soort diagram – onderwerp";
+  - voor het klassendiagram, het packagediagram, het ERD en het databasemodel een andere tekenmotor (ELK) gekozen, die rechte lijnen trekt en labels niet over lijnen zet;
+  - alle diagrammen opnieuw als SVG gemaakt en als plaatje bekeken.
+- **Wat niet werkte:** ELK maakte het use case diagram veel te breed en onleesbaar; daar is de oude tekenmotor gebleven. Een nieuwe instelling voor de breedte van klassen zette de namen van de actoren scheef; die is weer weggehaald.
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.

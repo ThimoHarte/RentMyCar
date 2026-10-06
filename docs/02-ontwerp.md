@@ -51,10 +51,12 @@ De functie `tco()` staat één keer in `Car` en gebruikt de twee abstracte funct
 **`Photo`** is een foto van een auto. Alleen de bestandsnaam wordt opgeslagen; het bestand zelf staat op de schijf van de server.
 
 **`Reservation`** is een reservering van een auto door een huurder, met een start- en eindmoment, het verwachte aantal kilometers en een status. De klasse bevat de regels die alleen over de reservering zelf gaan:
-- bij het maken wordt gecontroleerd dat het eindmoment na het startmoment ligt en dat de duur minimaal 1 uur is;
+- een nieuwe reservering wordt gemaakt met de functie `Reservation.request(...)` in het *companion object*. Die controleert eerst alle regels (de huurder is niet de eigenaar, de start ligt in de toekomst, het eindmoment ligt na het startmoment, de duur is minimaal 1 uur), berekent de prijs en geeft een reservering met status `REQUESTED` terug. Zo kan er nooit een reservering bestaan die niet aan de regels voldoet;
 - `estimatedPrice` is de geschatte huurprijs. Die wordt bij het aanvragen één keer berekend met `car.rentalPrice()` en daarna vastgelegd. Als de eigenaar later zijn tarieven aanpast, blijft de prijs van de reservering gelijk;
 - `overlapsWith()` controleert of twee reserveringen in tijd overlappen;
 - `approve()`, `reject()` en `cancel()` veranderen de status, maar alleen als dat volgens de levenscyclus mag (zie hoofdstuk 1.4).
+
+De functies die van de tijd afhangen (`request()`, `approve()` en `cancel()`) krijgen de huidige tijd mee als parameter (`now`), in plaats van zelf de klok te lezen. Daardoor kunnen ze met een vaste tijd worden getest: bijvoorbeeld "wat gebeurt er als de start al voorbij is?".
 
 **`ReservationStatus`** is een *enum* met de vier statussen van een reservering.
 
@@ -74,6 +76,7 @@ De functie `tco()` staat één keer in `Car` en gebruikt de twee abstracte funct
 | **Enum** | `FuelType`, `ReservationStatus` | Een vaste, kleine lijst mogelijkheden. |
 | **Object (singleton)** | `CostAssumptions` | Alle vaste getallen staan op één plek. Als een prijs verandert, hoeft dat maar op één plek te worden aangepast. |
 | **Encapsulatie** | De status van `Reservation` | De status kan alleen veranderen via `approve()`, `reject()` en `cancel()`. Die functies controleren eerst of de overgang mag. Zo kan een afgewezen reservering bijvoorbeeld nooit meer worden goedgekeurd. |
+| **Companion object** | `Reservation.request(...)` | Een functie die bij de klasse hoort en niet bij één object. Hij maakt een nieuwe reservering en controleert eerst alle regels. Dit is een eenvoudige vorm van het *factory*-patroon. |
 | **Data class** | `Address` | Een klasse die alleen gegevens bevat. Kotlin maakt automatisch onder andere `equals()` en `toString()`. |
 
 ### Keuze: de overlapcontrole zit in `Reservation`
@@ -105,7 +108,7 @@ De code van de server is ingedeeld **per feature**: elk onderdeel van de casus h
 | Package | Inhoud |
 |---|---|
 | `rentmycar.server` | Het starten van de server (`Server.kt`), het installeren van de plugins en het koppelen van de routes (`Application.kt`), en het aanmaken van alle services en repositories (`Dependencies.kt`). |
-| `rentmycar.server.users` | Gebruikers: registreren, inloggen en het domeinobject `User`. |
+| `rentmycar.server.users` | Gebruikers: registreren, inloggen, het domeinobject `User`, het hashen van wachtwoorden (`PasswordHasher`) en het maken en controleren van tokens (`TokenService`). |
 | `rentmycar.server.cars` | Auto's: aanbieden, zoeken, wijzigen, verwijderen, foto's, en de domeinklassen `Car`, `IceCar`, `ElectricCar`, `HydrogenCar`, `Address` en `Photo`. |
 | `rentmycar.server.reservations` | Reserveringen: aanvragen, goedkeuren, afwijzen, annuleren, en het domeinobject `Reservation`. |
 | `rentmycar.server.common` | Onderdelen die alle features gebruiken: de foutafhandeling, het opzetten van de database en `CostAssumptions`. |

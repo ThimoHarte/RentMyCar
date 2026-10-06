@@ -1,7 +1,7 @@
 @startuml architecture
 !include style.iuml
 
-title Architectuur – lagen binnen een feature
+title Architectuur – Lagen binnen een feature
 
 skinparam linetype polyline
 skinparam componentStyle rectangle
@@ -9,7 +9,7 @@ skinparam componentStyle rectangle
 rectangle "<b>Client</b>\nIntelliJ .http-bestand, later de Android-app" as client #FFFFFF
 
 rectangle "<b>Ktor-server</b>" {
-  rectangle "<b>Plugins</b>\nJSON · JWT-authenticatie · foutafhandeling (StatusPages)" as plugins #FEF3C7
+  rectangle "<b>Plugins</b>\nJSON · JWT-authenticatie · rate limiting · foutafhandeling (StatusPages)" as plugins #FEF3C7
 
   rectangle "<b>Routes</b>\nontvangt het verzoek en stuurt een antwoord\n(HTTP, statuscodes, DTO's)" as routes #E0E7FF
   rectangle "<b>Service</b>\nvoert een use case uit: regels toepassen\nen de stappen coördineren" as service #E0E7FF
