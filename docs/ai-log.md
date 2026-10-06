@@ -165,6 +165,11 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Aanpassing ontwerp:** `fileName` van `Photo` is in het klassendiagram `{readOnly}` geworden, omdat een bestandsnaam nooit verandert.
 - **Ook gevonden:** het bouwen van de Android-kant van `core` vraagt om het accepteren van de Android SDK-licenties; tot die tijd wordt alleen de server-kant gebouwd (`-p jvm`).
 
+### 2026-10-06 – `CostAssumptions` (door de AI geschreven)
+- **Wat ik vroeg:** na de uitleg over `object` (singleton) en `const val` heb ik de AI gevraagd deze stap helemaal zelf te maken.
+- **Wat de AI deed:** `server/src/common/CostAssumptions.kt` geschreven met alle vaste waarden uit `aannames.md` en de functie `fuelPrice()`, die met `when` de literprijs per brandstofsoort teruggeeft. De build is gecontroleerd.
+- **Hoe ik het controleer:** de waarden vergelijken met de tabellen in `aannames.md`, en ik moet kunnen uitleggen wat een `object`, `const val` en de `when` zonder `else` doen.
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.
