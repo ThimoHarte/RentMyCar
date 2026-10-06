@@ -170,6 +170,11 @@ In dit logboek houd ik bij op welke momenten ik AI heb gebruikt tijdens het proj
 - **Wat de AI deed:** `server/src/common/CostAssumptions.kt` geschreven met alle vaste waarden uit `aannames.md` en de functie `fuelPrice()`, die met `when` de literprijs per brandstofsoort teruggeeft. De build is gecontroleerd.
 - **Hoe ik het controleer:** de waarden vergelijken met de tabellen in `aannames.md`, en ik moet kunnen uitleggen wat een `object`, `const val` en de `when` zonder `else` doen.
 
+### 2026-10-06 – `Car` met overerving (gedeeltelijk door de AI)
+- **Wat de AI uitlegde:** overerving, abstracte functies met `override`, de sealed class, polymorfisme, het `init`-blok met `require()` en `private set` (encapsulatie).
+- **Taakverdeling:** op mijn verzoek heeft de AI `Car.kt` en `IceCar.kt` gemaakt als voorbeeld. `ElectricCar.kt` en `HydrogenCar.kt` schrijf ik zelf op dezelfde manier.
+- **Ontwerpkeuze (voorstel van de AI):** de gegevens van een auto zijn `val` in plaats van `var`. Bij het wijzigen van een auto wordt een nieuw object gemaakt, zodat de controles in `init` altijd worden uitgevoerd. Alleen `isActive` kan veranderen, en alleen via `deactivate()`. Het klassendiagram is hierop aangepast (`{readOnly}`).
+
 ### 2026-10-05 – Afspraken over AI-gebruik en dit logboek
 - **Doel:** bepalen hoe ik AI inzet en verantwoord.
 - **Afspraak:** de AI mag code en tekst voorstellen, maar ik bepaal wat er gebouwd wordt, lees alles door en neem alleen over wat ik kan uitleggen. Dit logboek beschrijft eerlijk wat de AI deed en wat ik deed.
