@@ -4,7 +4,7 @@ import rentmycar.server.common.CostAssumptions
 import rentmycar.server.users.User
 
 // An electric car that runs on hydrogen
-class hydrogenCar(
+class HydrogenCar(
     id: Int,
     owner: User,
     brand: String,
