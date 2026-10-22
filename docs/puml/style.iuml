@@ -100,6 +100,8 @@ skinparam usecase {
   FontSize 13
 }
 
+skinparam maxMessageSize 170
+
 skinparam sequence {
   ParticipantBackgroundColor #E0E7FF
   ParticipantBorderColor #6366F1
