@@ -2,7 +2,7 @@
 
 ## 0.1 Aanleiding en doel
 
-Dit document hoort bij de module *AI-powered software development* van de opleiding Associate degree ICT van Avans Hogeschool (jaar 2). Het beschrijft de uitwerking van leeruitkomst 1: *AI-powered backend development*.
+Dit document hoort bij de module *AI-powered software development* van de opleiding Informatica van Avans Hogeschool (jaar 2). Het beschrijft de uitwerking van leeruitkomst 1: *AI-powered backend development*.
 
 Het doel van dit document is het ontwerp, de realisatie en het testen te beschrijven van een Web API voor de casus Rent my car. De Web API is gebouwd in Kotlin met het framework Ktor. In periode 2 wordt deze API gebruikt door een Android-app.
 
@@ -83,6 +83,6 @@ Ik heb voor deze opzet gekozen omdat de server en de app dezelfde datamodellen u
 
 Daarnaast zijn er twee losse documenten:
 - `aannames.md`: de vaste waarden die in de berekeningen worden gebruikt, zoals energieprijzen;
-- `ai-log.md`: een logboek van het gebruik van AI tijdens het project.
+- de **AI-verantwoording** (los document, bron `ai-verantwoording.md`): hoe ik AI heb gebruikt tijdens het project.
 
 **Taalafspraken:** dit document en de commitberichten zijn in het Nederlands. De code, inclusief de namen en het commentaar, is in het Engels, omdat de opdracht Engelstalige broncode vraagt.
