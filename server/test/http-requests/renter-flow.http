@@ -1,0 +1,82 @@
+### Renter: log in, find a car, request it, view it and cancel it
+### Start the server first: .\kotlin.bat run -m server
+### Daan is a demo user (see DemoData.kt)
+
+### Log in and save the token
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "daan@example.com",
+  "password": "Welkom123!"
+}
+
+> {%
+    client.global.set("renterToken", response.body.token);
+%}
+
+### Log in with a wrong password (401)
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "daan@example.com",
+  "password": "wrong"
+}
+
+### Find an electric car in Breda
+GET http://localhost:8080/api/cars?type=BEV&city=Breda
+
+### Request the Tesla (car 4) for 4 hours
+POST http://localhost:8080/api/reservations
+Authorization: Bearer {{renterToken}}
+Content-Type: application/json
+
+{
+  "carId": 4,
+  "start": "2030-01-10T09:00",
+  "end": "2030-01-10T13:00",
+  "expectedKm": 80
+}
+
+> {%
+    client.global.set("reservationId", response.body.id);
+%}
+
+### A reservation of only 30 minutes (400)
+POST http://localhost:8080/api/reservations
+Authorization: Bearer {{renterToken}}
+Content-Type: application/json
+
+{
+  "carId": 4,
+  "start": "2030-01-11T09:00",
+  "end": "2030-01-11T09:30",
+  "expectedKm": 10
+}
+
+### My reservations
+GET http://localhost:8080/api/reservations/mine
+Authorization: Bearer {{renterToken}}
+
+### One reservation (after approval it shows the contact details of the owner)
+GET http://localhost:8080/api/reservations/{{reservationId}}
+Authorization: Bearer {{renterToken}}
+
+### Try to approve my own request (403: only the owner can do this)
+PATCH http://localhost:8080/api/reservations/{{reservationId}}/status
+Authorization: Bearer {{renterToken}}
+Content-Type: application/json
+
+{
+  "status": "APPROVED"
+}
+
+### Cancel the reservation
+PATCH http://localhost:8080/api/reservations/{{reservationId}}/status
+Authorization: Bearer {{renterToken}}
+Content-Type: application/json
+
+{
+  "status": "CANCELLED"
+}

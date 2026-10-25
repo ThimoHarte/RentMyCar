@@ -1,0 +1,17 @@
+### Visitor: search and view cars without logging in
+### Start the server first: .\kotlin.bat run -m server
+
+### All active cars
+GET http://localhost:8080/api/cars
+
+### Only electric cars in Breda
+GET http://localhost:8080/api/cars?type=BEV&city=Breda
+
+### Cars with a maximum hourly rate of 7 euro
+GET http://localhost:8080/api/cars?maxHourlyRate=7
+
+### The details of one car
+GET http://localhost:8080/api/cars/1
+
+### A car that does not exist (404)
+GET http://localhost:8080/api/cars/999
