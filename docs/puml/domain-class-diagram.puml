@@ -1,0 +1,137 @@
+@startuml domain-class-diagram
+!include style.iuml
+!pragma layout elk
+
+title Klassendiagram – Domein
+
+hide circle
+hide empty members
+skinparam linetype polyline
+skinparam nodesep 90
+
+class Reservation {
+  + id: Int {readOnly}
+  + car: Car {readOnly}
+  + renter: User {readOnly}
+  + start: LocalDateTime {readOnly}
+  + end: LocalDateTime {readOnly}
+  + expectedKm: Int {readOnly}
+  + estimatedPrice: Double {readOnly}
+  + status: ReservationStatus {readOnly}
+  --
+  + {static} NEW_ID = 0
+  + {static} request(car, renter, start, end, expectedKm, now): Reservation
+  + hours(): Double
+  + overlapsWith(other: Reservation): Boolean
+  + approve(now: LocalDateTime)
+  + reject()
+  + cancel(now: LocalDateTime)
+}
+
+enum ReservationStatus <<enum>> {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+class User {
+  + id: Int {readOnly}
+  + name: String
+  + email: String
+  + passwordHash: String
+  + bonusPoints: Int = 0
+}
+
+abstract class Car <<sealed>> {
+  + id: Int {readOnly}
+  + owner: User {readOnly}
+  + brand: String {readOnly}
+  + model: String {readOnly}
+  + year: Int {readOnly}
+  + licensePlate: String {readOnly}
+  + seats: Int {readOnly}
+  + hourlyRate: Double {readOnly}
+  + kmRate: Double {readOnly}
+  + purchasePrice: Double {readOnly}
+  + address: Address {readOnly}
+  + isActive: Boolean {readOnly}
+  --
+  + {static} NEW_ID = 0
+  + {abstract} costPerKm(): Double
+  + {abstract} fixedCostsPerYear(): Double
+  + tco(): Double
+  + rentalPrice(hours: Double, km: Int): Double
+  + deactivate()
+}
+
+class Address <<data>> {
+  + street: String
+  + houseNumber: String
+  + postalCode: String
+  + city: String
+}
+
+class IceCar {
+  + fuelType: FuelType {readOnly}
+  + litersPer100Km: Double {readOnly}
+  --
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
+
+class ElectricCar {
+  + kWhPer100Km: Double {readOnly}
+  --
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
+
+class HydrogenCar {
+  + kgPer100Km: Double {readOnly}
+  --
+  + costPerKm(): Double
+  + fixedCostsPerYear(): Double
+}
+
+enum FuelType <<enum>> {
+  PETROL
+  DIESEL
+  LPG
+}
+
+class CostAssumptions <<object>> {
+  + KM_PER_YEAR = 15000
+  + DEPRECIATION_RATE = 0.15
+  + fuel prices per liter
+  + electricity price per kWh
+  + hydrogen price per kg
+  + fixed costs per kind of car
+}
+
+' Layout: reservation on top, car in the middle, subclasses below
+Reservation -right-> "status 1" ReservationStatus
+Reservation "0..*" -down-> "car 1" Car
+Reservation "0..*" -down-> "renter 1" User
+Car "0..*" -left-> "owner 1" User
+
+' Composition: the address belongs to one car
+Car *-right- "address 1" Address
+
+' Inheritance: three kinds of cars
+Car <|-down- IceCar
+Car <|-down- ElectricCar
+Car <|-down- HydrogenCar
+
+IceCar -down-> "fuelType 1" FuelType
+
+' The cars use the fixed values for their calculations
+IceCar .down.> CostAssumptions
+ElectricCar .down.> CostAssumptions
+HydrogenCar .down.> CostAssumptions
+
+legend bottom
+  Foto's (klasse <b>Photo</b>) zijn nog niet gerealiseerd; ze worden in periode 2 toegevoegd.
+endlegend
+
+@enduml

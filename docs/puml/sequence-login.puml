@@ -1,0 +1,58 @@
+@startuml sequence-login
+!include style.iuml
+
+title Sequence diagram – Inloggen (UC-02)
+
+autonumber
+hide footbox
+
+actor "Client" as client
+participant "RateLimit\n(plugin)" as rate
+participant "UserRoutes" as routes
+participant "UserService" as service
+participant "UserRepository" as repo <<repository>>
+participant "PasswordHasher" as hasher
+participant "TokenService" as tokens
+
+client -> rate : POST /api/users/login\n{ email, password }
+
+alt meer dan 10 pogingen in de afgelopen minuut
+  rate --> client : 429 Too Many Requests
+else binnen de limiet
+  rate -> routes : request
+  activate routes
+  routes -> service : login(email, password)
+  activate service
+  service -> repo : findByEmail(email)
+  activate repo
+  repo --> service : User?
+  deactivate repo
+
+  alt gebruiker gevonden
+    service -> hasher : verify(password, user.passwordHash)
+    activate hasher
+    hasher --> service : true / false
+    deactivate hasher
+  end
+
+  alt gebruiker niet gevonden of wachtwoord fout
+    service --> routes : null
+    routes --> client : 401 Unauthorized\n{ "message": "Invalid email or password." }
+  else wachtwoord klopt
+    service -> tokens : createToken(user.id)
+    activate tokens
+    tokens --> service : token (valid for 15 minutes)
+    deactivate tokens
+    service --> routes : token
+    deactivate service
+    routes --> client : 200 OK\n{ "token": "eyJ..." }
+    deactivate routes
+  end
+end
+
+note over service
+  Dezelfde foutmelding bij een onbekend
+  e-mailadres en bij een fout wachtwoord.
+end note
+
+@enduml

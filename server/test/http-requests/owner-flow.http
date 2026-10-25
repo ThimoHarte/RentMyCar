@@ -1,0 +1,121 @@
+### Owner: register, log in, offer a car, see the costs and approve a request
+### Start the server first: .\kotlin.bat run -m server
+
+### Register a new owner
+POST http://localhost:8080/api/users/register
+Content-Type: application/json
+
+{
+  "name": "Thimo Harte",
+  "email": "t.harte@student.avans.nl",
+  "password": "Welkom123!"
+}
+
+### Log in and save the token
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "t.harte@student.avans.nl",
+  "password": "Welkom123!"
+}
+
+> {%
+    client.global.set("ownerToken", response.body.token);
+%}
+
+### My own data
+GET http://localhost:8080/api/users/me
+Authorization: Bearer {{ownerToken}}
+
+### Offer an electric car
+POST http://localhost:8080/api/cars
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "type": "BEV",
+  "brand": "Volkswagen",
+  "model": "ID.3",
+  "year": 2022,
+  "licensePlate": "V-111-FS",
+  "seats": 5,
+  "hourlyRate": 7.50,
+  "kmRate": 0.18,
+  "purchasePrice": 33000.0,
+  "address": {
+    "street": "Hogeschoollaan",
+    "houseNumber": "1",
+    "postalCode": "4818 CR",
+    "city": "Breda"
+  },
+  "kWhPer100Km": 16.0
+}
+
+> {%
+    client.global.set("carId", response.body.id);
+%}
+
+### Offer a car with a negative rate (400)
+POST http://localhost:8080/api/cars
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "type": "ICE",
+  "brand": "Fiat",
+  "model": "Panda",
+  "year": 2015,
+  "licensePlate": "ZZ-999-Z",
+  "seats": 4,
+  "hourlyRate": -1.0,
+  "kmRate": 0.10,
+  "purchasePrice": 8000.0,
+  "address": { "street": "Markt", "houseNumber": "1", "postalCode": "4811 XA", "city": "Breda" },
+  "fuelType": "PETROL",
+  "litersPer100Km": 5.0
+}
+
+### My cars
+GET http://localhost:8080/api/cars/mine
+Authorization: Bearer {{ownerToken}}
+
+### Change the car: a higher hourly rate
+PUT http://localhost:8080/api/cars/{{carId}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "type": "BEV",
+  "brand": "Volkswagen",
+  "model": "ID.3",
+  "year": 2022,
+  "licensePlate": "V-111-FS",
+  "seats": 5,
+  "hourlyRate": 8.00,
+  "kmRate": 0.18,
+  "purchasePrice": 33000.0,
+  "address": { "street": "Hogeschoollaan", "houseNumber": "1", "postalCode": "4818 CR", "city": "Breda" },
+  "kWhPer100Km": 16.0
+}
+
+### Costs per km and TCO
+GET http://localhost:8080/api/cars/{{carId}}/costs
+Authorization: Bearer {{ownerToken}}
+
+### The requests for my car (log in as daan@example.com in renter-flow.http and request this car first)
+GET http://localhost:8080/api/cars/{{carId}}/reservations
+Authorization: Bearer {{ownerToken}}
+
+### Approve the request of Daan (reservation 3)
+PATCH http://localhost:8080/api/reservations/35/status
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "status": "APPROVED"
+}
+
+### Delete (deactivate) the car
+DELETE http://localhost:8080/api/cars/{{carId}}
+Authorization: Bearer {{ownerToken}}

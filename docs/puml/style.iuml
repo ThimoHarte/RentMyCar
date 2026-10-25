@@ -1,0 +1,133 @@
+' Shared style for all diagrams of Rent my car
+' Rules: titles, names and headers are bold; normal text is not.
+
+' Layout engine without Graphviz. A diagram can choose "elk" for straighter lines.
+!pragma layout smetana
+
+skinparam shadowing false
+skinparam actorStyle awesome
+skinparam roundCorner 12
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 14
+skinparam defaultFontColor #1E293B
+skinparam backgroundColor #FFFFFF
+skinparam nodesep 50
+skinparam ranksep 60
+
+skinparam title {
+  FontSize 20
+  FontStyle bold
+  FontColor #0F172A
+}
+
+skinparam legend {
+  BackgroundColor #F8FAFC
+  BorderColor #94A3B8
+  FontSize 13
+}
+
+skinparam arrow {
+  Color #475569
+  Thickness 1.3
+  FontSize 13
+  FontColor #334155
+}
+
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  BorderThickness 1.2
+  HeaderBackgroundColor #E0E7FF
+  FontSize 15
+  FontStyle bold
+  AttributeFontSize 13
+  StereotypeFontColor #4338CA
+  StereotypeFontSize 12
+}
+
+skinparam class<<enum>> {
+  HeaderBackgroundColor #DCFCE7
+}
+
+skinparam class<<object>> {
+  HeaderBackgroundColor #FEF3C7
+}
+
+skinparam class<<data>> {
+  HeaderBackgroundColor #F1F5F9
+}
+
+skinparam entity {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+}
+
+skinparam note {
+  BackgroundColor #FFFBEB
+  BorderColor #F59E0B
+  FontSize 13
+}
+
+skinparam package {
+  BackgroundColor #F8FAFC
+  BorderColor #94A3B8
+  FontSize 14
+  FontStyle bold
+  FontColor #334155
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #94A3B8
+  FontStyle plain
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+}
+
+skinparam actor {
+  BackgroundColor #E0E7FF
+  BorderColor #4338CA
+  FontSize 13
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #EEF2FF
+  BorderColor #6366F1
+  FontSize 13
+}
+
+skinparam maxMessageSize 170
+
+skinparam sequence {
+  ParticipantBackgroundColor #E0E7FF
+  ParticipantBorderColor #6366F1
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  ActorBackgroundColor #E0E7FF
+  ActorBorderColor #4338CA
+  ActorFontStyle bold
+  LifeLineBorderColor #94A3B8
+  LifeLineBackgroundColor #EEF2FF
+  GroupBackgroundColor #F1F5F9
+  GroupBorderColor #94A3B8
+  GroupFontStyle bold
+  GroupHeaderFontColor #334155
+  GroupHeaderFontStyle bold
+  DividerBackgroundColor #F1F5F9
+  ArrowColor #475569
+  MessageAlign left
+}
+
+skinparam participant<<domain>> {
+  BackgroundColor #DCFCE7
+  BorderColor #16A34A
+}
+
+skinparam participant<<repository>> {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+}

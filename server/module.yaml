@@ -4,12 +4,28 @@ dependencies:
   - //core
   - $ktor.server.core
   - $ktor.server.netty
+  - $ktor.server.contentNegotiation
+  - $ktor.server.statusPages
+  - $ktor.server.auth
+  - $ktor.server.auth.jwt
+  - $ktor.server.rateLimit
+  - $ktor.serialization.kotlinx.json
   - $libs.logback.classic
+  - $libs.exposed.core
+  - $libs.exposed.jdbc
+  - $libs.exposed.kotlin.datetime
+  - $libs.h2
+  - $libs.bouncycastle
 
 settings:
-  ktor: enabled
+  kotlin:
+    serialization: json
+  ktor:
+    enabled: true
+    version: 3.6.0
   jvm:
-    mainClass: org.example.project.server.ApplicationKt
+    mainClass: rentmycar.server.ServerKt
 
 test-dependencies:
   - $ktor.server.testHost
+  - $ktor.client.contentNegotiation

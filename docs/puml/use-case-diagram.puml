@@ -1,0 +1,78 @@
+@startuml use-case-diagram
+!include style.iuml
+
+title Use case diagram – Rent my car
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Bezoeker" as Visitor
+actor "Gebruiker" as User
+actor "Eigenaar" as Owner
+actor "Huurder" as Renter
+
+' A logged-in user can do everything a visitor can do
+Visitor <|-- User
+' Owner and renter are roles of the same user
+User <|-- Owner
+User <|-- Renter
+
+rectangle "<b>Rent my car</b>" {
+
+    package "<b>Account</b>" {
+        usecase "UC-01 Account aanmaken" as UC01
+        usecase "UC-02 Inloggen" as UC02
+    }
+
+    package "<b>Auto's vinden</b>" {
+        usecase "UC-08 Auto's zoeken" as UC08
+        usecase "UC-09 Auto bekijken" as UC09
+    }
+
+    package "<b>Auto's aanbieden</b>" {
+        usecase "UC-03 Auto aanbieden" as UC03
+        usecase "UC-04 Auto wijzigen" as UC04
+        usecase "UC-05 Auto verwijderen" as UC05
+        usecase "UC-06 Foto toevoegen\n<i>(periode 2)</i>" as UC06
+        usecase "UC-07 Kosten per km\nen TCO bekijken" as UC07
+        usecase "UC-11 Aanvraag goedkeuren\nof afwijzen" as UC11
+    }
+
+    package "<b>Auto's huren</b>" {
+        usecase "UC-10 Reservering aanvragen" as UC10
+        usecase "UC-12 Eigen reserveringen\nbekijken" as UC12
+        usecase "UC-13 Reservering annuleren" as UC13
+    }
+
+    package "<b>AI-agent</b>" {
+        usecase "UC-14 Advies van de\nAI-agent vragen\n<i>(nog niet gerealiseerd)</i>" as UC14
+    }
+}
+
+Visitor --> UC01
+Visitor --> UC02
+Visitor --> UC08
+Visitor --> UC09
+
+User --> UC14
+
+Owner --> UC03
+Owner --> UC04
+Owner --> UC05
+Owner --> UC06
+Owner --> UC07
+Owner --> UC11
+
+Renter --> UC10
+Renter --> UC12
+Renter --> UC13
+
+legend right
+  <b>Eigenaar</b> en <b>huurder</b> zijn rollen
+  van dezelfde gebruiker.
+  Een gebruiker kan alles wat
+  een bezoeker kan.
+  <i>(cursief)</i>: nog niet gerealiseerd.
+endlegend
+
+@enduml

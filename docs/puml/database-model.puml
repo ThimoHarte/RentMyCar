@@ -1,0 +1,67 @@
+@startuml database-model
+!include style.iuml
+!pragma layout elk
+
+title Databasemodel – Tabellen
+
+hide circle
+hide empty members
+skinparam linetype ortho
+
+entity "users" as users {
+  <b>id</b> : INT <<PK>>
+  --
+  name : VARCHAR(100)
+  email : VARCHAR(255) <<unique>>
+  password_hash : VARCHAR(255)
+  bonus_points : INT
+}
+
+entity "cars" as cars {
+  <b>id</b> : INT <<PK>>
+  --
+  <i>owner_id</i> : INT <<FK>>
+  type : VARCHAR(10)
+  brand : VARCHAR(50)
+  model : VARCHAR(50)
+  year : INT
+  license_plate : VARCHAR(10) <<unique>>
+  seats : INT
+  hourly_rate : DOUBLE
+  km_rate : DOUBLE
+  purchase_price : DOUBLE
+  street : VARCHAR(100)
+  house_number : VARCHAR(10)
+  postal_code : VARCHAR(10)
+  city : VARCHAR(100)
+  is_active : BOOLEAN
+  .. alleen ICE ..
+  fuel_type : VARCHAR(10) <<nullable>>
+  liters_per_100km : DOUBLE <<nullable>>
+  .. alleen BEV ..
+  kwh_per_100km : DOUBLE <<nullable>>
+  .. alleen FCEV ..
+  kg_per_100km : DOUBLE <<nullable>>
+}
+
+entity "reservations" as reservations {
+  <b>id</b> : INT <<PK>>
+  --
+  <i>car_id</i> : INT <<FK>>
+  <i>renter_id</i> : INT <<FK>>
+  start_time : DATETIME
+  end_time : DATETIME
+  expected_km : INT
+  estimated_price : DOUBLE
+  status : VARCHAR(10)
+}
+
+users ||--o{ cars : "owner_id"
+users ||--o{ reservations : "renter_id"
+cars ||--o{ reservations : "car_id"
+
+legend bottom
+  De tabel <b>car_photos</b> voor foto's volgt in periode 2.
+endlegend
+
+@enduml
