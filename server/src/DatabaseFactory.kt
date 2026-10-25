@@ -9,8 +9,9 @@ import rentmycar.server.users.UserTable
 
 // Connects to H2 and makes the tables (object: Kotlin makes exactly one, used via its name)
 object DatabaseFactory {
-    // Stored in a file, so the data is still there after a restart
-    const val FILE_URL = "jdbc:h2:file:./data/rentmycar"
+    // Stored in a file, so the data is still there after a restart.
+    // DB_CLOSE_DELAY=-1 keeps the database open while the server runs.
+    const val FILE_URL = "jdbc:h2:file:./data/rentmycar;DB_CLOSE_DELAY=-1"
 
     // The address of a database that only exists in memory, used in the tests
     fun inMemoryUrl(name: String): String {
