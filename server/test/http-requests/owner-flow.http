@@ -108,7 +108,7 @@ GET http://localhost:8080/api/cars/{{carId}}/reservations
 Authorization: Bearer {{ownerToken}}
 
 ### Approve the request of Daan (reservation 3)
-PATCH http://localhost:8080/api/reservations/3/status
+PATCH http://localhost:8080/api/reservations/35/status
 Authorization: Bearer {{ownerToken}}
 Content-Type: application/json
 
