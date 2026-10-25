@@ -23,7 +23,8 @@ class UserService(
         }
 
         val passwordHash = passwordHasher.hash(request.password)
-        return userRepository.add(request.name, request.email, passwordHash)
+        val user = userRepository.add(request.name, request.email, passwordHash)
+        return user
     }
 
     // Logs in: returns a token, or null when the email address or the password is wrong
@@ -37,7 +38,8 @@ class UserService(
         if (!passwordIsCorrect) {
             return null
         }
-        return tokenService.createToken(user.id)
+        val token = tokenService.createToken(user.id)
+        return token
     }
 
     // Returns the user, or gives a 404 when it does not exist

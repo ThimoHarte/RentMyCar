@@ -61,7 +61,8 @@ class CarService(
 
     // Returns all cars of one owner
     fun getCarsOfOwner(ownerId: Int): List<Car> {
-        return carRepository.findByOwner(ownerId)
+        val cars = carRepository.findByOwner(ownerId)
+        return cars
     }
 
     // Returns the car, but only when the user is the owner (otherwise 403)
@@ -83,7 +84,8 @@ class CarService(
             throw ConflictException("This license plate is already in use.")
         }
         val car = makeCar(Car.NEW_ID, owner, request)
-        return carRepository.add(car)
+        val savedCar = carRepository.add(car)
+        return savedCar
     }
 
     // Changes a car of the logged-in user

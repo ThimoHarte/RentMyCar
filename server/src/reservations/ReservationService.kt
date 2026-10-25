@@ -41,12 +41,14 @@ class ReservationService(
             expectedKm = request.expectedKm,
             now = now
         )
-        return reservationRepository.add(reservation)
+        val savedReservation = reservationRepository.add(reservation)
+        return savedReservation
     }
 
     // All reservations of the logged-in user as renter
     fun getMyReservations(userId: Int): List<Reservation> {
-        return reservationRepository.findByRenter(userId)
+        val reservations = reservationRepository.findByRenter(userId)
+        return reservations
     }
 
     // All reservations of a car; only the owner of the car can see them
@@ -58,7 +60,8 @@ class ReservationService(
         if (car.owner.id != userId) {
             throw ForbiddenException("This is not your car.")
         }
-        return reservationRepository.findByCar(carId)
+        val reservations = reservationRepository.findByCar(carId)
+        return reservations
     }
 
     // One reservation; only the renter and the owner of the car can see it
