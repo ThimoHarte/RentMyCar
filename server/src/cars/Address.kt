@@ -1,6 +1,6 @@
-package rentmycar.server.cars
+package cars
 
-// The place where a car is parked
+// The place where a car is parked (data class: only holds data)
 data class Address(
     val street: String,
     val houseNumber: String,

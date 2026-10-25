@@ -1,4 +1,4 @@
-package rentmycar.server.cars
+package cars
 
 import rentmycar.core.FuelType
 import rentmycar.server.common.CostAssumptions
@@ -17,20 +17,33 @@ class IceCar(
     kmRate: Double,
     purchasePrice: Double,
     address: Address,
-    photos: List<Photo> = emptyList(),
+    initiallyActive: Boolean = true,
     val fuelType: FuelType,
     val litersPer100Km: Double
 ) : Car(
     id, owner, brand, model, year, licensePlate, seats,
-    hourlyRate, kmRate, purchasePrice, address, photos
+    hourlyRate, kmRate, purchasePrice, address, initiallyActive
 ) {
     init {
         require(litersPer100Km > 0) { "Fuel use must be more than 0." }
     }
 
-    override fun costPerKm(): Double =
-        litersPer100Km * CostAssumptions.fuelPrice(fuelType) / 100
+    // Fuel costs per km (override: every kind of car calculates this in its own way)
+    override fun costPerKm(): Double {
+        val pricePerLiter = CostAssumptions.fuelPrice(fuelType)
+        val costPer100Km = litersPer100Km * pricePerLiter
 
-    override fun fixedCostsPerYear(): Double =
-        CostAssumptions.ICE_INSURANCE + CostAssumptions.ICE_ROAD_TAX + CostAssumptions.ICE_MAINTENANCE
+        val costPerKm = costPer100Km / 100
+        return costPerKm
+    }
+
+    // Fixed costs per year of a car with a combustion engine (override: every kind of car has its own values)
+    override fun fixedCostsPerYear(): Double {
+        val insurance = CostAssumptions.ICE_INSURANCE
+        val roadTax = CostAssumptions.ICE_ROAD_TAX
+        val maintenance = CostAssumptions.ICE_MAINTENANCE
+
+        val fixedCosts = insurance + roadTax + maintenance
+        return fixedCosts
+    }
 }

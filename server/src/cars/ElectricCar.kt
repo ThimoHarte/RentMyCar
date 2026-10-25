@@ -1,9 +1,9 @@
-package rentmycar.server.cars
+package cars
 
 import rentmycar.server.common.CostAssumptions
 import rentmycar.server.users.User
 
-// An electric car with a battery
+// An electric car with a battery (BEV)
 class ElectricCar(
     id: Int,
     owner: User,
@@ -16,19 +16,32 @@ class ElectricCar(
     kmRate: Double,
     purchasePrice: Double,
     address: Address,
-    photos: List<Photo> = emptyList(),
-    val kWhPer100Km: Double,
+    initiallyActive: Boolean = true,
+    val kWhPer100Km: Double
 ) : Car(
     id, owner, brand, model, year, licensePlate, seats,
-    hourlyRate, kmRate, purchasePrice, address, photos
+    hourlyRate, kmRate, purchasePrice, address, initiallyActive
 ) {
     init {
         require(kWhPer100Km > 0) { "Energy use must be more than 0." }
     }
 
-    override fun costPerKm(): Double =
-        kWhPer100Km * CostAssumptions.ELECTRICITY_PRICE / 100
+    // Electricity costs per km (override: every kind of car calculates this in its own way)
+    override fun costPerKm(): Double {
+        val pricePerKWh = CostAssumptions.ELECTRICITY_PRICE
+        val costPer100Km = kWhPer100Km * pricePerKWh
 
-    override fun fixedCostsPerYear(): Double =
-        CostAssumptions.BEV_INSURANCE + CostAssumptions.BEV_ROAD_TAX + CostAssumptions.BEV_MAINTENANCE
+        val costPerKm = costPer100Km / 100
+        return costPerKm
+    }
+
+    // Fixed costs per year of an electric car (override: every kind of car has its own values)
+    override fun fixedCostsPerYear(): Double {
+        val insurance = CostAssumptions.BEV_INSURANCE
+        val roadTax = CostAssumptions.BEV_ROAD_TAX
+        val maintenance = CostAssumptions.BEV_MAINTENANCE
+
+        val fixedCosts = insurance + roadTax + maintenance
+        return fixedCosts
+    }
 }
