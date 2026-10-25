@@ -4,7 +4,7 @@ In dit hoofdstuk staat hoe de applicatie is opgebouwd. Eerst het domeinmodel: de
 
 **Twee begrippen die in dit hoofdstuk vaak terugkomen:**
 - **Domein:** de wereld waar de applicatie over gaat: auto's, gebruikers en reserveringen, en de regels die daarbij horen. Bijvoorbeeld: "een reservering duurt minimaal 1 uur". Die regels gelden ook zonder computer. Het *domeinmodel* zijn de klassen die deze wereld beschrijven.
-- **Repository:** een technisch onderdeel dat domeinobjecten opslaat in de database en weer ophaalt. Een repository bedenkt geen regels, maar bewaart alleen. De repositories staan in het implementatie-klassendiagram in hoofdstuk 3.
+- **Repository:** een technisch onderdeel dat domeinobjecten opslaat in de database en weer ophaalt. Een repository bedenkt geen regels, maar bewaart alleen. De repositories staan in de architectuur in hoofdstuk 3.1.
 
 ## 2.1 Domeinmodel (klassendiagram)
 
@@ -24,15 +24,16 @@ De namen in de code zijn Engels. De belangrijkste vertalingen:
 
 ### Toelichting per klasse
 
-**`User`** is een gebruiker van het platform. Een gebruiker kan eigenaar zijn van auto's en huurder van reserveringen. Het wachtwoord wordt alleen gehasht opgeslagen (`passwordHash`). De bonuspunten worden in periode 2 gebruikt.
+**`User`** is een gebruiker van het platform. Een gebruiker kan eigenaar zijn van auto's en huurder van reserveringen. Het wachtwoord wordt alleen gehasht opgeslagen (`passwordHash`). De bonuspunten beginnen op 0 en worden in periode 2 gebruikt.
 
-**`Car`** bevat alles wat voor elke auto geldt: merk, model, kenteken, tarieven, adres, foto's en de eigenaar. `Car` is een *sealed class*. Je kunt dus geen "losse" `Car` maken, maar alleen een van de drie soorten. De klasse heeft twee abstracte functies die elke soort zelf invult:
+**`Car`** bevat alles wat voor elke auto geldt: merk, model, kenteken, tarieven, adres en de eigenaar. `Car` is een *sealed class*. Je kunt dus geen "losse" `Car` maken, maar alleen een van de drie soorten. Bij het maken controleert de klasse de invoer met `require()`: merk, model en kenteken zijn verplicht, er is minstens 1 zitplaats en tarieven en aanschafprijs zijn niet negatief. De klasse heeft twee abstracte functies die elke soort zelf invult:
 - `costPerKm()`: de kosten per kilometer, berekend met het verbruik en de energieprijs van die soort;
 - `fixedCostsPerYear()`: de vaste kosten per jaar (verzekering, wegenbelasting en onderhoud) van die soort.
 
 Daarnaast heeft `Car`:
 - `rentalPrice(hours, km)`: de huurprijs voor een aantal uren en kilometers (uurtarief × uren + km-tarief × km);
-- `isActive` en `deactivate()`: een auto wordt niet echt verwijderd, maar op niet actief gezet (zie hoofdstuk 1.4).
+- `isActive` en `deactivate()`: een auto wordt niet echt verwijderd, maar op niet actief gezet (zie hoofdstuk 1.4). `isActive` kan alleen via `deactivate()` veranderen (`private set`);
+- `NEW_ID` in het *companion object*: het id (0) van een auto die nog niet is opgeslagen. De database geeft bij het opslaan het echte id.
 
 De functie `tco()` staat één keer in `Car` en gebruikt de twee abstracte functies. Daardoor werkt de TCO-berekening voor alle soorten auto's, zonder dat de code drie keer hoeft te worden geschreven. De formules staan in `aannames.md`.
 
@@ -48,13 +49,14 @@ De functie `tco()` staat één keer in `Car` en gebruikt de twee abstracte funct
 
 **`Address`** is het adres waar de auto staat. Het is een *data class*: het bevat alleen gegevens.
 
-**`Photo`** is een foto van een auto. Alleen de bestandsnaam wordt opgeslagen; het bestand zelf staat op de schijf van de server.
+**`Photo`** *(periode 2, nog niet gerealiseerd)*: een foto van een auto. Het plan is dat alleen de bestandsnaam in de database komt en het bestand zelf op de schijf van de server. Deze klasse staat daarom nog niet in het klassendiagram.
 
 **`Reservation`** is een reservering van een auto door een huurder, met een start- en eindmoment, het verwachte aantal kilometers en een status. De klasse bevat de regels die alleen over de reservering zelf gaan:
-- een nieuwe reservering wordt gemaakt met de functie `Reservation.request(...)` in het *companion object*. Die controleert eerst alle regels (de huurder is niet de eigenaar, de start ligt in de toekomst, het eindmoment ligt na het startmoment, de duur is minimaal 1 uur), berekent de prijs en geeft een reservering met status `REQUESTED` terug. Zo kan er nooit een reservering bestaan die niet aan de regels voldoet;
+- een nieuwe reservering wordt gemaakt met de functie `Reservation.request(...)` in het *companion object*. Die controleert eerst alle regels (de huurder is niet de eigenaar, de start ligt in de toekomst, het eindmoment ligt na het startmoment, de duur is minimaal 1 uur, het verwachte aantal kilometers is niet negatief), berekent de prijs en geeft een reservering met status `REQUESTED` terug. Zo kan er nooit een reservering bestaan die niet aan de regels voldoet;
 - `estimatedPrice` is de geschatte huurprijs. Die wordt bij het aanvragen één keer berekend met `car.rentalPrice()` en daarna vastgelegd. Als de eigenaar later zijn tarieven aanpast, blijft de prijs van de reservering gelijk;
+- `hours()` geeft het aantal uren van de reservering;
 - `overlapsWith()` controleert of twee reserveringen in tijd overlappen;
-- `approve()`, `reject()` en `cancel()` veranderen de status, maar alleen als dat volgens de levenscyclus mag (zie hoofdstuk 1.4).
+- `approve()`, `reject()` en `cancel()` veranderen de status, maar alleen als dat volgens de levenscyclus mag (zie hoofdstuk 1.4). De status zelf heeft een `private set`.
 
 De functies die van de tijd afhangen (`request()`, `approve()` en `cancel()`) krijgen de huidige tijd mee als parameter (`now`), in plaats van zelf de klok te lezen. Daardoor kunnen ze met een vaste tijd worden getest: bijvoorbeeld "wat gebeurt er als de start al voorbij is?".
 
@@ -71,12 +73,12 @@ De functies die van de tijd afhangen (`request()`, `approve()` en `cancel()`) kr
 | **Overerving** | `IceCar`, `ElectricCar` en `HydrogenCar` erven van `Car`. | De drie soorten hebben veel gegevens gemeenschappelijk. Die staan één keer in `Car`. |
 | **Abstracte klasse (sealed class)** | `Car` | Een auto is altijd een van de drie soorten. Een *sealed class* legt vast dat er precies deze drie soorten zijn. Dit is dezelfde opbouw als `Property` in de HousingMarket-workshop van les 3. |
 | **Polymorfisme** | `costPerKm()` en `fixedCostsPerYear()` | Overal in de code wordt dezelfde functie aangeroepen; elke soort auto voert zijn eigen versie uit. `tco()` hoeft niet te weten welke soort auto het is. |
-| **Compositie** | `Car` ◆ `Address` en `Car` ◆ `Photo` | Een adres en foto's horen bij precies één auto en bestaan niet zonder die auto. Ze worden nooit los van de auto gebruikt. |
+| **Compositie** | `Car` ◆ `Address` (en in periode 2 `Car` ◆ `Photo`) | Een adres hoort bij precies één auto en bestaat niet zonder die auto. Het wordt nooit los van de auto gebruikt. |
 | **Associatie** | `Car` → `User` (eigenaar), `Reservation` → `Car` en `Reservation` → `User` (huurder) | Deze objecten bestaan los van elkaar. Een gebruiker blijft bestaan als zijn auto wordt verwijderd. |
-| **Enum** | `FuelType`, `ReservationStatus` | Een vaste, kleine lijst mogelijkheden. |
+| **Enum** | `FuelType`, `ReservationStatus` (en `CarType` in de DTO's) | Een vaste, kleine lijst mogelijkheden. |
 | **Object (singleton)** | `CostAssumptions` | Alle vaste getallen staan op één plek. Als een prijs verandert, hoeft dat maar op één plek te worden aangepast. |
 | **Encapsulatie** | De status van `Reservation` | De status kan alleen veranderen via `approve()`, `reject()` en `cancel()`. Die functies controleren eerst of de overgang mag. Zo kan een afgewezen reservering bijvoorbeeld nooit meer worden goedgekeurd. |
-| **Companion object** | `Reservation.request(...)` | Een functie die bij de klasse hoort en niet bij één object. Hij maakt een nieuwe reservering en controleert eerst alle regels. Dit is een eenvoudige vorm van het *factory*-patroon. |
+| **Companion object** | `Reservation.request(...)`, `Car.NEW_ID`, `Reservation.NEW_ID` | Iets dat bij de klasse hoort en niet bij één object. `request()` maakt een nieuwe reservering en controleert eerst alle regels; dit is een eenvoudige vorm van het *factory*-patroon. |
 | **Data class** | `Address` | Een klasse die alleen gegevens bevat. Kotlin maakt automatisch onder andere `equals()` en `toString()`. |
 
 ### Keuze: de overlapcontrole zit in `Reservation`
@@ -91,11 +93,11 @@ Deze keuze is vergelijkbaar met de HousingMarket-workshop uit les 3: daar zit de
 
 ### Keuze: de interfaces staan bij de repositories
 
-In het domeinmodel staat geen interface. Er is in het domein geen onderdeel waar een interface echt iets toevoegt, en een verzonnen interface maakt het ontwerp alleen ingewikkelder. Interfaces worden wel gebruikt bij de repositories (bijvoorbeeld `CarRepository`). Daar zorgen ze ervoor dat de rest van de code niet afhangt van de database, zodat in de tests een nep-versie kan worden gebruikt. Dit staat in het implementatie-klassendiagram in hoofdstuk 3. Deze werkwijze komt uit les 3 (`EmployeeRepository`), les 7 (`FakeTaskRepository`) en de voorbeeldapplicatie van de docent (`FakeUserRepository`).
+In het domeinmodel staat geen interface. Er is in het domein geen onderdeel waar een interface echt iets toevoegt, en een verzonnen interface maakt het ontwerp alleen ingewikkelder. Interfaces worden wel gebruikt bij de repositories (bijvoorbeeld `CarRepository`). Daar zorgen ze ervoor dat de rest van de code niet afhangt van de database, zodat in de tests een nep-versie kan worden gebruikt. Dit staat in het architectuurdiagram in hoofdstuk 3.1. Deze werkwijze komt uit les 3 (`EmployeeRepository`), les 7 (`FakeTaskRepository`) en de voorbeeldapplicatie van de docent (`FakeUserRepository`).
 
 ### Keuze: bedragen als `Double`
 
-Bedragen worden opgeslagen als `Double`. Dat is eenvoudig, maar kan kleine afrondingsverschillen geven (bijvoorbeeld € 0,1452 in plaats van € 0,15). Bij het tonen van bedragen worden ze daarom afgerond op twee decimalen. Voor een echte betaalapplicatie zou een type zonder afrondingsfouten nodig zijn; omdat er in deze applicatie geen echte betalingen zijn, is `Double` voldoende.
+Bedragen worden opgeslagen als `Double`. Dat is eenvoudig, maar kan kleine afrondingsverschillen geven. Bij het versturen worden bedragen daarom afgerond met de functie `rounded()` uit `common/Rounding.kt`: de huurprijs en de TCO op twee decimalen, en de kosten per km op vier decimalen (bijvoorbeeld € 0,1452), omdat dat bedrag zo klein is. Voor een echte betaalapplicatie zou een type zonder afrondingsfouten nodig zijn; omdat er in deze applicatie geen echte betalingen zijn, is `Double` voldoende.
 
 ## 2.3 Packagediagram
 
@@ -107,12 +109,14 @@ De code van de server is ingedeeld **per feature**: elk onderdeel van de casus h
 
 | Package | Inhoud |
 |---|---|
-| `rentmycar.server` | Het starten van de server (`Server.kt`), het installeren van de plugins en het koppelen van de routes (`Application.kt`), en het aanmaken van alle services en repositories (`Dependencies.kt`). |
-| `rentmycar.server.users` | Gebruikers: registreren, inloggen, het domeinobject `User`, het hashen van wachtwoorden (`PasswordHasher`) en het maken en controleren van tokens (`TokenService`). |
-| `rentmycar.server.cars` | Auto's: aanbieden, zoeken, wijzigen, verwijderen, foto's, en de domeinklassen `Car`, `IceCar`, `ElectricCar`, `HydrogenCar`, `Address` en `Photo`. |
-| `rentmycar.server.reservations` | Reserveringen: aanvragen, goedkeuren, afwijzen, annuleren, en het domeinobject `Reservation`. |
-| `rentmycar.server.common` | Onderdelen die alle features gebruiken: de foutafhandeling, het opzetten van de database en `CostAssumptions`. |
-| `rentmycar.core` | De gedeelde module met de DTO's en de enums `FuelType` en `ReservationStatus`. |
+| `rentmycar.server` | Het starten van de server en het inlezen van de instellingen (`Server.kt`), het installeren van de plugins en het koppelen van de routes (`Application.kt`), het aanmaken van alle services en repositories (`Dependencies.kt`), het verbinden met de database en het maken van de tabellen (`DatabaseFactory.kt`) en het vullen van een lege database met testdata (`DemoData.kt`). |
+| `rentmycar.server.users` | Gebruikers: registreren, inloggen, het domeinobject `User`, de tabel `UserTable`, het hashen van wachtwoorden (`PasswordHasher`) en het maken en controleren van tokens (`TokenService`, met de instellingen in `JwtConfig`). |
+| `rentmycar.server.cars` | Auto's: aanbieden, zoeken, wijzigen, verwijderen, kosten berekenen, de tabel `CarTable` en de domeinklassen `Car`, `IceCar`, `ElectricCar`, `HydrogenCar` en `Address`. Foto's (`Photo`) volgen in periode 2. |
+| `rentmycar.server.reservations` | Reserveringen: aanvragen, goedkeuren, afwijzen, annuleren, de tabel `ReservationTable` en het domeinobject `Reservation`. |
+| `rentmycar.server.common` | Onderdelen die alle features gebruiken: de foutafhandeling (`StatusPages.kt` en `Exceptions.kt`), hulpfuncties voor een verzoek (`CallUtils.kt`: het gebruikers-id uit het token en een getal uit de URL), afronden (`Rounding.kt`), tijd (`TimeUtils.kt`) en `CostAssumptions`. |
+| `rentmycar.core` | De gedeelde module met de DTO's, `ApiError` en de enums `CarType`, `FuelType` en `ReservationStatus`. |
+
+Elke feature heeft ook een bestand `...Mapping.kt` met de functie `toResponse()`, die een domeinobject omzet naar een DTO. Het omzetten van een databaserij naar een domeinobject gebeurt in de repository zelf.
 
 **Afhankelijkheden:**
 - `reservations` gebruikt `cars` en `users`, omdat een reservering een auto en een huurder heeft;
@@ -137,7 +141,7 @@ Het ERD laat zien welke gegevens de applicatie bewaart en hoe ze samenhangen, no
 | Gebruiker – Auto | Een gebruiker biedt nul of meer auto's aan. Een auto heeft precies één eigenaar. |
 | Gebruiker – Reservering | Een gebruiker vraagt nul of meer reserveringen aan. Een reservering heeft precies één huurder. |
 | Auto – Reservering | Een auto heeft nul of meer reserveringen. Een reservering is voor precies één auto. |
-| Auto – Foto | Een auto heeft nul of meer foto's. Een foto hoort bij precies één auto. |
+| Auto – Foto | Een auto heeft nul of meer foto's. Een foto hoort bij precies één auto. *Volgt in periode 2 (gestippeld in het ERD).* |
 
 ## 2.5 Relationeel databasemodel
 
@@ -145,7 +149,9 @@ Het ERD laat zien welke gegevens de applicatie bewaart en hoe ze samenhangen, no
 
 Bron: [`puml/database-model.puml`](puml/database-model.puml)
 
-De gegevens worden opgeslagen in vier tabellen: `users`, `cars`, `car_photos` en `reservations`. In de code worden deze tabellen beschreven met de library Exposed.
+De gegevens worden opgeslagen in drie tabellen: `users`, `cars` en `reservations`. In de code worden deze tabellen beschreven met de library Exposed (`UserTable`, `CarTable` en `ReservationTable`). `DatabaseFactory` maakt de tabellen bij het starten als ze nog niet bestaan. De database staat in het bestand `data/rentmycar.mv.db`, zodat de gegevens na een herstart bewaard blijven; de tests gebruiken een database in het geheugen.
+
+In periode 2 komt er een vierde tabel bij: `car_photos`, voor de foto's van een auto.
 
 ### Vertaling van het OO-model naar tabellen
 
@@ -157,7 +163,7 @@ Een database kent geen klassen, overerving of lijsten, maar alleen tabellen met 
 | Eigenschap | Kolom | `licensePlate` → `license_plate` | Algemeen |
 | Associatie | Vreemde sleutel (FK) | De eigenaar van `Car` → `owner_id` verwijst naar `users` | Algemeen |
 | Compositie met één object | Kolommen in dezelfde tabel | `Address` → `street`, `house_number`, `postal_code`, `city` in `cars` | Eigen keuze |
-| Compositie met een lijst | Aparte tabel met een FK | `photos` → tabel `car_photos` met `car_id` | Zoals `IncidentImagesTable` in de demo van de docent |
+| Compositie met een lijst (periode 2) | Aparte tabel met een FK | `photos` → tabel `car_photos` met `car_id` | Zoals `IncidentImagesTable` in de demo van de docent |
 | Overerving | Eén tabel met een kolom `type` | `IceCar`, `ElectricCar`, `HydrogenCar` → `cars` | Eigen keuze, zie hieronder |
 | Enum | De naam als tekst | `FuelType.PETROL` → `'PETROL'` | Les 7: `enumerationByName` |
 | Tijdstip | `DATETIME` | `start` → `start_time` | Algemeen |
@@ -177,17 +183,22 @@ Voor het opslaan van de drie soorten auto's zijn drie bekende manieren (uit *Pat
 Ik heb gekozen voor **A**, omdat dit het eenvoudigst te bouwen en te begrijpen is. De lege kolommen zijn een bewuste afweging: er zijn maar vier extra kolommen. Bij het uitlezen bepaalt de kolom `type` welke klasse wordt gemaakt:
 
 ```kotlin
-// Make the right kind of car from a database row
-when (row[CarTable.type]) {
-    "ICE" -> IceCar(...)
-    "BEV" -> ElectricCar(...)
-    "FCEV" -> HydrogenCar(...)
+// Make the right kind of car from a database row (shortened)
+val type = row[CarTable.type]
+if (type == CarType.ICE) {
+    return IceCar(...)
 }
+if (type == CarType.BEV) {
+    return ElectricCar(...)
+}
+return HydrogenCar(...)
 ```
+
+De kolom `type` is de enum `CarType`, opgeslagen als tekst (`enumerationByName`). Dit staat in de functie `toCar()` van `ExposedCarRepository`.
 
 ### Keuze: auto's worden niet echt verwijderd
 
-De tabel `cars` heeft een kolom `is_active`. Als een eigenaar zijn auto verwijdert, wordt `is_active` op `false` gezet en blijft de rij bestaan (*soft delete*). Daardoor blijven de reserveringen die naar deze auto verwijzen geldig, en kan een huurder zijn oude reserveringen blijven zien. Bij het zoeken worden alleen auto's met `is_active = true` getoond. De foto's van de auto blijven ook bewaard.
+De tabel `cars` heeft een kolom `is_active`. Als een eigenaar zijn auto verwijdert, wordt `is_active` op `false` gezet en blijft de rij bestaan (*soft delete*). Daardoor blijven de reserveringen die naar deze auto verwijzen geldig, en kan een huurder zijn oude reserveringen blijven zien. Bij het zoeken worden alleen auto's met `is_active = true` getoond. Een niet-actieve auto geeft bij opvragen, wijzigen, verwijderen en reserveren een 404.
 
 ### Keuze: de huurprijs wordt vastgelegd
 

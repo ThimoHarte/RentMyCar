@@ -13,7 +13,7 @@ Elk verzoek dat bij de server binnenkomt, gaat door dezelfde lagen. Elke laag he
 | Laag | Verantwoordelijkheid | Voorbeeld |
 |---|---|---|
 | **Plugins** | Algemene zaken voor alle verzoeken: JSON omzetten, controleren of de gebruiker is ingelogd (JWT) en fouten omzetten naar een nette foutmelding. | Een verzoek zonder geldig token krijgt status 401. |
-| **Routes** | Alleen HTTP: het verzoek uitlezen, de service aanroepen en een antwoord met de juiste statuscode terugsturen. Hier worden DTO's omgezet naar domeinobjecten en terug. | `POST /reservations/{id}/approve` roept `ReservationService.approve()` aan. |
+| **Routes** | Alleen HTTP: het verzoek uitlezen, de service aanroepen en een antwoord met de juiste statuscode terugsturen. De route zet het antwoord om naar een DTO met `toResponse()`. | `PATCH /api/reservations/{id}/status` roept `ReservationService.changeStatus()` aan. |
 | **Service** | Een use case uitvoeren: de stappen coördineren en de regels toepassen. | Bij goedkeuren: de aanvraag ophalen, controleren dat de gebruiker de eigenaar is, controleren op overlap en de nieuwe status opslaan. |
 | **Domein** | De klassen en regels van Rent my car (hoofdstuk 2). Het domein weet niets van HTTP of de database. | `reservation.overlapsWith(other)` |
 | **Repository** | Domeinobjecten opslaan en ophalen. De service praat alleen met de *interface*; de echte versie gebruikt Exposed en de H2-database. | `ExposedReservationRepository` |
@@ -25,16 +25,20 @@ Doordat de service alleen de interface van de repository kent, kan in de tests e
 De lagen zitten niet in één grote map per laag, maar in een package per feature (`users`, `cars`, `reservations`; zie het packagediagram in hoofdstuk 2.3). Alles wat bij auto's hoort, staat dus bij elkaar. Binnen elke feature zijn de lagen wel te herkennen aan de bestandsnamen:
 
 ```
-rentmycar/server/
-├── Server.kt          main(): laadt de instellingen en start de server
-├── Application.kt     installeert de plugins en koppelt de routes
-├── Dependencies.kt    maakt alle repositories en services aan
+server/src/
+├── Server.kt           main(): laadt de instellingen en start de server
+├── Application.kt      installeert de plugins en koppelt de routes
+├── Dependencies.kt     maakt alle repositories en services aan
+├── DatabaseFactory.kt  verbindt met H2 en maakt de tabellen
+├── DemoData.kt         vult een lege database met testdata
 ├── users/
 ├── cars/
-│   ├── CarRoutes.kt
-│   ├── CarService.kt
-│   ├── CarRepository.kt
-│   └── Car.kt
+│   ├── CarRoutes.kt       routes
+│   ├── CarService.kt      service
+│   ├── CarRepository.kt   interface + ExposedCarRepository
+│   ├── CarTable.kt        de tabel voor Exposed
+│   ├── CarMapping.kt      domeinobject -> DTO
+│   └── Car.kt, IceCar.kt, ElectricCar.kt, HydrogenCar.kt, Address.kt   domein
 ├── reservations/
 └── common/
 ```
@@ -44,13 +48,16 @@ rentmycar/server/
 In `Dependencies.kt` worden alle repositories en services één keer aangemaakt en als parameter aan elkaar doorgegeven:
 
 ```kotlin
-// Build all parts of the app
+// Makes all repositories and services once and passes them to each other (shortened)
 val userRepository = ExposedUserRepository(database)
 val carRepository = ExposedCarRepository(database, userRepository)
-val carService = CarService(carRepository)
+val reservationRepository = ExposedReservationRepository(database, carRepository, userRepository)
+
+val carService = CarService(carRepository, userRepository, reservationRepository)
+val reservationService = ReservationService(reservationRepository, carRepository, userRepository)
 ```
 
-Hiervoor wordt geen apart framework gebruikt. Het is gewone Kotlin-code die in volgorde wordt uitgevoerd, dus makkelijk te volgen. In een test wordt op dezelfde manier een `CarService` gemaakt, maar dan met een `FakeCarRepository`.
+Hiervoor wordt geen apart framework gebruikt. Het is gewone Kotlin-code die in volgorde wordt uitgevoerd, dus makkelijk te volgen. In een test wordt op dezelfde manier een service gemaakt, maar dan met fake repositories (`FakeCarRepository`, `FakeReservationRepository` en `FakeUserRepository`).
 
 ### Herkomst van de keuzes
 
@@ -88,7 +95,14 @@ Alle URL's beginnen met `/api`, net als in de voorbeeldapplicatie van de docent.
 | `POST /api/cars` 🔒 | Auto aanbieden | 201 + auto | UC-03 |
 | `PUT /api/cars/{id}` 🔒 eigenaar | Auto wijzigen | 200 + auto | UC-04 |
 | `DELETE /api/cars/{id}` 🔒 eigenaar | Auto op niet actief zetten | 204 | UC-05 |
-| `GET /api/cars/{id}/costs` 🔒 eigenaar | Kosten per km en TCO, met de opbouw | 200 + kosten | UC-07 |
+| `GET /api/cars/{id}/costs` 🔒 eigenaar | Kosten per km en TCO per jaar | 200 + kosten | UC-07 |
+
+`GET /api/cars/mine` toont ook de eigen auto's die niet meer actief zijn.
+
+**Gepland voor periode 2 (nog niet gerealiseerd):**
+
+| Methode en URL | Wat | Gelukt | Use case |
+|---|---|---|---|
 | `POST /api/cars/{id}/photos` 🔒 eigenaar | Foto uploaden (`multipart/form-data`) | 201 + foto | UC-06 |
 | `DELETE /api/cars/{id}/photos/{photoId}` 🔒 eigenaar | Foto verwijderen | 204 | UC-06 |
 | `GET /api/photos/{fileName}` | Foto bekijken | 200 + afbeelding | UC-09 |
@@ -97,12 +111,13 @@ Alle URL's beginnen met `/api`, net als in de voorbeeldapplicatie van de docent.
 
 | Parameter | Betekenis | Voorbeeld |
 |---|---|---|
-| `type` | Soort auto | `ICE`, `BEV` of `FCEV` |
-| `city` | Plaats | `Breda` |
+| `type` | Soort auto (hoofdletters maken niet uit) | `ICE`, `BEV` of `FCEV` |
+| `city` | Plaats (hoofdletters maken niet uit) | `Breda` |
 | `maxHourlyRate` | Maximale uurprijs | `10.0` |
-| `from` en `to` | Beschikbaar in deze periode (beide nodig) | `2026-10-20T09:00` |
 
-Voorbeeld: `GET /api/cars?type=BEV&city=Breda&maxHourlyRate=10&from=2026-10-20T09:00&to=2026-10-20T13:00`
+Voorbeeld: `GET /api/cars?type=BEV&city=Breda&maxHourlyRate=10`
+
+Een onbekende soort auto of een uurprijs die geen getal is, geeft 400. Filteren op beschikbaarheid in een periode (`from` en `to`) is nog niet gerealiseerd en volgt in periode 2.
 
 ### Reserveringen
 
@@ -121,6 +136,9 @@ Het wijzigen van de status gaat via één endpoint, zoals in de voorbeeldapplica
 | `APPROVED` | Eigenaar van de auto | Status is `REQUESTED`, de start is nog niet bereikt en er is geen overlap met een andere goedgekeurde reservering |
 | `REJECTED` | Eigenaar van de auto | Status is `REQUESTED` |
 | `CANCELLED` | Huurder | Status is `REQUESTED` of `APPROVED` en de start is nog niet bereikt |
+| `REQUESTED` | Niemand | Een reservering kan niet terug naar `REQUESTED` (400) |
+
+Wie niet de juiste persoon is, krijgt 403. Klopt de status of het tijdstip niet, dan volgt 409.
 
 ### Voorbeelden van requests en responses
 
@@ -166,24 +184,19 @@ Antwoord `200 OK`:
 }
 ```
 
-Het veld `type` bepaalt welke soort auto wordt gemaakt. Bij `ICE` horen de velden `fuelType` en `litersPer100Km`, bij `FCEV` het veld `kgPer100Km`. Antwoord `201 Created` met dezelfde gegevens plus `id`, `ownerId`, `photos` (lege lijst) en `isActive: true`.
+Het veld `type` bepaalt welke soort auto wordt gemaakt. Bij `ICE` horen de velden `fuelType` en `litersPer100Km`, bij `BEV` het veld `kWhPer100Km` en bij `FCEV` het veld `kgPer100Km`. Ontbreekt het verbruik dat bij de soort hoort, dan volgt 400. Antwoord `201 Created` met dezelfde gegevens plus `id`, `ownerId` en `isActive: true`.
 
-**Kosten bekijken:** `GET /api/cars/7/costs` 🔒 eigenaar. Antwoord `200 OK`:
+**Kosten bekijken:** `GET /api/cars/7/costs` 🔒 eigenaar. Antwoord `200 OK` (de BEV uit het rekenvoorbeeld in `aannames.md`):
 
 ```json
 {
-  "costPerKm": 0.058,
+  "costPerKm": 0.0578,
   "tcoPerYear": 8312.0,
-  "breakdown": {
-    "depreciation": 5250.0,
-    "insurance": 1100.0,
-    "roadTax": 710.0,
-    "maintenance": 385.0,
-    "energy": 867.0
-  },
   "kmPerYear": 15000
 }
 ```
+
+De kosten per km worden afgerond op vier decimalen en de TCO op twee. De opbouw van de TCO (afschrijving, verzekering, wegenbelasting, onderhoud en energie) staat in `aannames.md`; de API geeft alleen de uitkomsten terug.
 
 **Reservering aanvragen:** `POST /api/reservations` 🔒
 
@@ -216,7 +229,16 @@ Antwoord `200 OK` met de reservering, nu met `"status": "APPROVED"`. Vraagt de h
 
 ### DTO's
 
-De JSON-gegevens hierboven zijn in de code *DTO's* (Data Transfer Objects): eenvoudige `@Serializable` data classes in de gedeelde module `core`, zoals `RegisterRequest`, `LoginRequest`, `TokenResponse`, `CreateCarRequest`, `CarResponse`, `CostsResponse`, `CreateReservationRequest`, `ReservationResponse` en `ChangeStatusRequest`. De routes zetten een DTO om naar een domeinobject en terug. Zo bepaalt de API zelf welke gegevens naar buiten gaan; het wachtwoord-hash van een gebruiker komt bijvoorbeeld nooit in een response.
+De JSON-gegevens hierboven zijn in de code *DTO's* (Data Transfer Objects): eenvoudige `@Serializable` data classes in de gedeelde module `core`.
+
+| Bestand | DTO's |
+|---|---|
+| `UserDtos.kt` | `RegisterRequest`, `LoginRequest`, `TokenResponse`, `UserResponse` |
+| `CarDtos.kt` | `CarRequest` (voor toevoegen én wijzigen), `CarResponse`, `AddressDto`, `CostsResponse` |
+| `ReservationDtos.kt` | `CreateReservationRequest`, `ChangeStatusRequest`, `ReservationResponse`, `OwnerContact` |
+| `ApiError.kt` | `ApiError` (de vorm van elke foutmelding) |
+
+De service maakt van een request-DTO een domeinobject; de route zet het domeinobject met `toResponse()` om naar een response-DTO. Zo bepaalt de API zelf welke gegevens naar buiten gaan; de wachtwoord-hash van een gebruiker komt bijvoorbeeld nooit in een response.
 
 ## 3.3 Foutafhandeling en statuscodes
 
@@ -228,11 +250,11 @@ Fouten worden in de code als *exception* gegooid. De Ktor-plugin **StatusPages**
 
 | Situatie | Exception in de code | Status |
 |---|---|---|
-| Ongeldige invoer, bijvoorbeeld een negatief tarief of een eindmoment vóór het startmoment | `IllegalArgumentException`, onder andere via `require()` | **400** Bad Request |
-| Geen geldig token, of een verkeerd e-mailadres of wachtwoord bij het inloggen | Afgehandeld door de authenticatie-plugin | **401** Unauthorized |
+| Ongeldige invoer, bijvoorbeeld een negatief tarief, een eindmoment vóór het startmoment, ongeldige JSON of een id in de URL dat geen getal is | `IllegalArgumentException` (onder andere via `require()`) of `BadRequestException` (van Ktor) | **400** Bad Request |
+| Geen geldig token, of een verkeerd e-mailadres of wachtwoord bij het inloggen | Geen exception: de authenticatie-plugin (`challenge`) of `UserRoutes` antwoordt direct | **401** Unauthorized |
 | Ingelogd, maar niet de eigenaar of huurder | `ForbiddenException` (eigen klasse) | **403** Forbidden |
 | Auto of reservering bestaat niet (of de auto is niet actief) | `NotFoundException` (van Ktor) | **404** Not Found |
-| De actie kan nu niet: overlap, kenteken of e-mailadres bestaat al, verkeerde status | `IllegalStateException` via `check()`, of `ConflictException` (eigen klasse) | **409** Conflict |
+| De actie kan nu niet: overlap, kenteken of e-mailadres bestaat al, verkeerde status, auto verwijderen met reserveringen in de toekomst | `IllegalStateException` via `check()`, of `ConflictException` (eigen klasse) | **409** Conflict |
 | Te veel inlog- of registratiepogingen | Afgehandeld door de RateLimit-plugin | **429** Too Many Requests |
 | Een onverwachte fout | Alle overige exceptions | **500** Internal Server Error, zonder technische details in het antwoord; de fout wordt wel gelogd |
 
@@ -339,7 +361,7 @@ Deze controle staat in de service en niet in de route, zodat hij met een unit te
 - Ktor documentatie, Rate limiting: ktor.io/docs/server-rate-limit.html
 
 ## 3.5 AI-agent
-_Nog in te vullen._
+_Nog niet gerealiseerd. De AI-agent (FE-20, UC-14) wordt later uitgewerkt; het taalmodel draait dan lokaal en is gratis (NFE-09)._
 
 ## 3.6 Sequence diagrams
 
@@ -364,7 +386,7 @@ Bron: [`puml/sequence-create-car.puml`](puml/sequence-create-car.puml)
 
 - De **Authentication**-plugin controleert het token. Bij een ontbrekend, verlopen of ongeldig token volgt 401; anders krijgt de route het gebruikers-id.
 - `CarService` haalt de eigenaar op en controleert dat het kenteken nog niet bestaat (anders 409).
-- Het veld `type` bepaalt welke klasse wordt gemaakt (`when`): in dit voorbeeld een `ElectricCar`. Bij het maken controleert de klasse zelf de invoer met `require()` (anders 400).
+- In `makeCar()` bepaalt het veld `type` welke klasse wordt gemaakt: in dit voorbeeld een `ElectricCar`. Ontbreekt het verbruik van die soort, dan volgt 400. Bij het maken controleert de klasse zelf de invoer met `require()` (anders 400).
 - De repository slaat de auto op en geeft hem terug met een id; de route antwoordt met 201.
 
 ### Reservering aanvragen (UC-10)
@@ -387,4 +409,4 @@ Bron: [`puml/sequence-approve-reservation.puml`](puml/sequence-approve-reservati
 - `ReservationService` zoekt de aanvraag op (anders 404) en controleert of de ingelogde gebruiker de eigenaar van de auto is (anders 403).
 - De service haalt de goedgekeurde reserveringen van dezelfde auto op en controleert met `overlapsWith()` of er een overlapt (anders 409). Dit is de regel uit FE-15: een eigenaar kan een auto niet twee keer voor dezelfde periode verhuren.
 - `approve(now)` controleert met `check()` dat de status nog `REQUESTED` is en dat de start nog niet voorbij is (anders 409), en zet daarna de status op `APPROVED`.
-- **Gelijktijdige verzoeken:** het controleren op overlap en het opslaan gebeuren in één databasetransactie. Zonder transactie zouden twee goedkeuringen die op precies hetzelfde moment binnenkomen allebei "geen overlap" kunnen zien.
+- **Gelijktijdige verzoeken:** het controleren op overlap en het opslaan staan samen in een `synchronized`-blok. Daardoor wordt er maar één goedkeuring tegelijk uitgevoerd. Zonder dit blok zouden twee goedkeuringen die op precies hetzelfde moment binnenkomen allebei "geen overlap" kunnen zien. *Beperking:* dit werkt omdat er één server draait; met meerdere servers naast elkaar zou een databasetransactie met een lock nodig zijn.

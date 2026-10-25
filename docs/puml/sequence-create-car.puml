@@ -39,8 +39,8 @@ else token is geldig
     routes --> client : 409 Conflict\n{ "message": "This license plate is already in use." }
   else nieuw kenteken
     note over service
-      Het veld "type" bepaalt welke
-      klasse wordt gemaakt (when):
+      makeCar(): het veld "type" bepaalt
+      welke klasse wordt gemaakt (if):
       ICE → IceCar, BEV → ElectricCar,
       FCEV → HydrogenCar
     end note
