@@ -1,10 +1,10 @@
 # 6. Productverantwoording
 
-*Dit hoofdstuk is met hulp van AI opgesteld op basis van mijn AI-verantwoording en het verloop van het project.*
+*Dit hoofdstuk is met hulp van AI opgesteld op basis van mijn AI-log en het verloop van het project.*
 
 ## 6.1 Verantwoording AI-gebruik
 
-Ik heb tijdens het hele project gewerkt met **Claude Code** (model Claude Opus 5.5), in de terminal naast IntelliJ IDEA. De uitgebreide verantwoording, per datum met wat ik vroeg, wat de AI voorstelde en wat ik besloot, staat in het losse document **AI-verantwoording**. Hieronder de samenvatting.
+Ik heb tijdens het hele project gewerkt met **Claude Code** (model Claude Opus 5.5), in de terminal naast IntelliJ IDEA. De uitgebreide verantwoording, per datum met wat ik vroeg, wat de AI voorstelde en wat ik besloot, staat in het losse document **AI-log**. Hieronder de samenvatting.
 
 **Waarvoor ik AI heb gebruikt:**
 

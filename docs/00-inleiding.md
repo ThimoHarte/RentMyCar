@@ -83,6 +83,6 @@ Ik heb voor deze opzet gekozen omdat de server en de app dezelfde datamodellen u
 
 Daarnaast zijn er twee losse documenten:
 - `aannames.md`: de vaste waarden die in de berekeningen worden gebruikt, zoals energieprijzen;
-- de **AI-verantwoording** (los document, bron `ai-verantwoording.md`): hoe ik AI heb gebruikt tijdens het project.
+- het **AI-log** (los document, bron `ai-log.md`): hoe ik AI heb gebruikt tijdens het project.
 
 **Taalafspraken:** dit document en de commitberichten zijn in het Nederlands. De code, inclusief de namen en het commentaar, is in het Engels, omdat de opdracht Engelstalige broncode vraagt.
