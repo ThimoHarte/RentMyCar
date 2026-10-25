@@ -6,8 +6,8 @@ POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "name": "Fleur Smit",
-  "email": "fleur@example.com",
+  "name": "Thimo Harte",
+  "email": "t.harte@student.avans.nl",
   "password": "Welkom123!"
 }
 
@@ -16,7 +16,7 @@ POST http://localhost:8080/api/users/login
 Content-Type: application/json
 
 {
-  "email": "fleur@example.com",
+  "email": "t.harte@student.avans.nl",
   "password": "Welkom123!"
 }
 
@@ -107,8 +107,8 @@ Authorization: Bearer {{ownerToken}}
 GET http://localhost:8080/api/cars/{{carId}}/reservations
 Authorization: Bearer {{ownerToken}}
 
-### Approve a request (change the id to the id of the request)
-PATCH http://localhost:8080/api/reservations/1/status
+### Approve the request of Daan (reservation 3)
+PATCH http://localhost:8080/api/reservations/3/status
 Authorization: Bearer {{ownerToken}}
 Content-Type: application/json
 
