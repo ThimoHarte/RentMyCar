@@ -45,7 +45,8 @@ In `Dependencies.kt` worden alle repositories en services één keer aangemaakt 
 
 ```kotlin
 // Build all parts of the app
-val carRepository = ExposedCarRepository(database)
+val userRepository = ExposedUserRepository(database)
+val carRepository = ExposedCarRepository(database, userRepository)
 val carService = CarService(carRepository)
 ```
 
@@ -273,11 +274,15 @@ Argon2id is de eerste keus van OWASP voor het opslaan van wachtwoorden. BCrypt w
 
 Bij elk verzoek controleert de server de handtekening en al deze claims. Is het token verlopen, aangepast of van een andere uitgever, dan volgt een 401. De inhoud van een token is voor iedereen leesbaar; daarom staan er geen wachtwoorden of andere geheime gegevens in.
 
-**De geheime sleutel** waarmee de server tokens ondertekent, staat niet in de code. Hij wordt gelezen uit de omgevingsvariabele `JWT_SECRET` en moet minstens 32 bytes lang zijn (zoals in de demo van de gastdocent en het advies "configuration lives outside the code" uit de gastles).
+**De instellingen** (poort, host, issuer, audience, realm en de geheime sleutel) staan in `server/resources/application.conf`, net als in de voorbeeldapplicatie van de docent. Elke instelling heeft een standaardwaarde voor de eigen computer en kan worden overschreven met een omgevingsvariabele (`${?PORT}`, `${?JWT_SECRET}` enzovoort). Zo staat er op een echte server geen geheim in de code, volgens het advies "configuration lives outside the code" uit de gastles. Bij het starten worden de instellingen ingelezen in de data classes `AppConfig`, `ServerConfig` en `JwtConfig`.
+
+**De geheime sleutel** waarmee de server tokens ondertekent, komt op een echte server uit de omgevingsvariabele `JWT_SECRET`. Twee verbeteringen ten opzichte van de docent:
+- De sleutel moet **minstens 32 tekens** lang zijn; `JwtConfig` controleert dat bij het starten (zoals in de auth-demo van de gastdocent). Een korte sleutel kan iemand met één token offline raden, en dan zelf tokens maken voor elke gebruiker. De standaard voor HS256 (RFC 7518) vraagt daarom minstens 256 bits.
+- Is `JWT_SECRET` niet ingesteld, dan geeft de server een **waarschuwing**, omdat de standaardsleutel uit `application.conf` in git staat en dus niet geheim is.
 
 ### Hoe lang is een token geldig?
 
-Een token is **15 minuten** geldig. Een token werkt als een sleutel: wie het heeft, wordt als de gebruiker gezien. Een token kan niet worden ingetrokken; uitloggen in de app maakt een gekopieerd token niet ongeldig. Daarom is een korte geldigheid veiliger. De geldigheid staat in het configuratiebestand, zodat hij kan worden aangepast.
+Een token is **15 minuten** geldig. Een token werkt als een sleutel: wie het heeft, wordt als de gebruiker gezien. Een token kan niet worden ingetrokken; uitloggen in de app maakt een gekopieerd token niet ongeldig. Daarom is een korte geldigheid veiliger. De geldigheid staat als constante `VALID_MINUTES` in `TokenService` (de docent zet zijn 1 uur ook in de code).
 
 | Bron | Geldigheid |
 |---|---|
@@ -316,6 +321,8 @@ Deze controle staat in de service en niet in de route, zodat hij met een unit te
 | Wachtwoorden | Als gewone tekst opgeslagen | Argon2id | **Argon2id**, zoals de gastdocent en OWASP |
 | Geldigheid token | 1 uur | 15 minuten | **15 minuten**, zoals de gastdocent en OWASP |
 | Refresh token | Nee | Nee, genoemd als "the usual pattern" | **Gepland voor periode 2** |
+| Instellingen | `application.conf` met omgevingsvariabelen | `application.yaml` met omgevingsvariabelen | **`application.conf`**, zoals de docent |
+| Lengte geheime sleutel | Niet gecontroleerd (standaard 9 tekens) | Minstens 32 bytes | **Minstens 32 tekens**, zoals de gastdocent, plus een waarschuwing zonder `JWT_SECRET` |
 | Rate limiting bij inloggen | Ja | Ja (5 of 10 per minuut) | **Ja, 10 per minuut**, zoals in de auth-demo |
 | Niet de eigenaar | Vaak 404 | 403 | **403**, zoals de gastdocent |
 | Rollen | Rol in het token | Rollen opzoeken per verzoek | **Geen rollen**; eigenaarschap controleren in de service |

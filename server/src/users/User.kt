@@ -1,4 +1,4 @@
-package users
+package rentmycar.server.users
 
 // A person who can offer cars and rent cars
 class User(

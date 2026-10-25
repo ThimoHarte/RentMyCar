@@ -37,7 +37,7 @@ else gebruiker is de eigenaar
   repo --> service : approved: List<Reservation>
   deactivate repo
 
-  service -> service : approved.any { it.overlapsWith(request) }
+  service -> service : for (other in approved)\nif (other.overlapsWith(request))
   note right
     overlapsWith() staat in Reservation:
     start < other.end && other.start < end

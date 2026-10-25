@@ -1,4 +1,4 @@
-package cars
+package rentmycar.server.cars
 
 import rentmycar.server.common.CostAssumptions
 import rentmycar.server.users.User

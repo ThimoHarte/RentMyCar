@@ -1,4 +1,4 @@
-package cars
+package rentmycar.server.cars
 
 // The place where a car is parked (data class: only holds data)
 data class Address(

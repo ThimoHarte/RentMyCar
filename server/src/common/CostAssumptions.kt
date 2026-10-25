@@ -2,7 +2,7 @@ package rentmycar.server.common
 
 import rentmycar.core.FuelType
 
-// Fixed values for the cost calculations (see docs/aannames.md)
+// Fixed values for the costs, see docs/aannames.md (object: Kotlin makes exactly one, used via its name)
 object CostAssumptions {
     const val KM_PER_YEAR = 15_000
     const val DEPRECIATION_RATE = 0.15
@@ -30,9 +30,12 @@ object CostAssumptions {
     const val FCEV_MAINTENANCE = 600.0
 
     // Returns the price per liter for a kind of fuel
-    fun fuelPrice(fuelType: FuelType): Double = when (fuelType) {
-        FuelType.PETROL -> PETROL_PRICE
-        FuelType.DIESEL -> DIESEL_PRICE
-        FuelType.LPG -> LPG_PRICE
+    fun fuelPrice(fuelType: FuelType): Double {
+        val price = when (fuelType) {
+            FuelType.PETROL -> PETROL_PRICE
+            FuelType.DIESEL -> DIESEL_PRICE
+            FuelType.LPG -> LPG_PRICE
+        }
+        return price
     }
 }

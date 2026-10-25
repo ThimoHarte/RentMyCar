@@ -1,6 +1,6 @@
 package rentmycar.core
 
-// The kind of fuel of a car with a combustion engine (ICE)
+// The fuel of an ICE car (enum: a fixed list of values)
 enum class FuelType {
     PETROL,
     DIESEL,
