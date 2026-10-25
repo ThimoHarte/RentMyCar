@@ -71,9 +71,10 @@ else gebruiker is de eigenaar
 end
 
 note over service, repo
-  Het controleren op overlap en het opslaan gebeuren
-  in één databasetransactie, zodat er niet tegelijk
-  twee overlappende aanvragen kunnen worden goedgekeurd.
+  Het controleren op overlap en het opslaan staan samen
+  in een synchronized-blok: er wordt maar één goedkeuring
+  tegelijk uitgevoerd, zodat er niet tegelijk twee
+  overlappende aanvragen kunnen worden goedgekeurd.
 end note
 
 @enduml

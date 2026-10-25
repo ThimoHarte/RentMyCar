@@ -26,7 +26,7 @@ entity "Auto" as Car {
   actief
 }
 
-entity "Foto" as Photo {
+entity "Foto (periode 2)" as Photo {
   bestandsnaam
 }
 
@@ -40,12 +40,15 @@ entity "Reservering" as Reservation {
 User ||--o{ Car : "biedt aan\n(eigenaar)"
 User ||--o{ Reservation : "vraagt aan\n(huurder)"
 Car ||--o{ Reservation : "wordt gereserveerd in"
-Car ||--o{ Photo : "heeft"
+Car ||..o{ Photo : "heeft"
 
 legend right
   <b>Kraaienpoot-notatie</b>
   ||  precies één
   o{  nul of meer
+
+  <b>Gestippelde lijn</b>: nog niet
+  gerealiseerd, volgt in periode 2
 endlegend
 
 @enduml

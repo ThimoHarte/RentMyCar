@@ -33,7 +33,7 @@ rectangle "<b>Rent my car</b>" {
         usecase "UC-03 Auto aanbieden" as UC03
         usecase "UC-04 Auto wijzigen" as UC04
         usecase "UC-05 Auto verwijderen" as UC05
-        usecase "UC-06 Foto toevoegen" as UC06
+        usecase "UC-06 Foto toevoegen\n<i>(periode 2)</i>" as UC06
         usecase "UC-07 Kosten per km\nen TCO bekijken" as UC07
         usecase "UC-11 Aanvraag goedkeuren\nof afwijzen" as UC11
     }
@@ -45,7 +45,7 @@ rectangle "<b>Rent my car</b>" {
     }
 
     package "<b>AI-agent</b>" {
-        usecase "UC-14 Advies van de\nAI-agent vragen" as UC14
+        usecase "UC-14 Advies van de\nAI-agent vragen\n<i>(nog niet gerealiseerd)</i>" as UC14
     }
 }
 
@@ -72,6 +72,7 @@ legend right
   van dezelfde gebruiker.
   Een gebruiker kan alles wat
   een bezoeker kan.
+  <i>(cursief)</i>: nog niet gerealiseerd.
 endlegend
 
 @enduml

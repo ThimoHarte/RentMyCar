@@ -23,10 +23,11 @@ activate routes
 routes -> service : requestReservation(request, userId, now)
 activate service
 
-service -> cars : findActiveById(carId)
+service -> cars : findById(carId)
 activate cars
 cars --> service : Car?
 deactivate cars
+service -> service : car.isActive?
 
 alt auto niet gevonden of niet actief
   service --> routes : NotFoundException
@@ -39,7 +40,7 @@ else auto gevonden
 
   service -> factory : request(car, renter, start, end, expectedKm, now)
   activate factory
-  factory -> factory : require(renter is not the owner)\nrequire(start > now)\nrequire(end > start)\nrequire(at least 1 hour)
+  factory -> factory : require(renter is not the owner)\nrequire(start > now)\nrequire(end > start)\nrequire(at least 1 hour)\nrequire(expectedKm >= 0)
 
   alt een regel klopt niet
     factory --> service : IllegalArgumentException

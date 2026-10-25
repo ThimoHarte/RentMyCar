@@ -4,34 +4,37 @@ In dit hoofdstuk staat wat de applicatie moet kunnen. De eisen komen uit de casu
 
 ## 1.1 Functionele eisen
 
-| Nr | Eis |
-|---|---|
-| FE-01 | Een bezoeker kan een account aanmaken. |
-| FE-02 | Een gebruiker kan inloggen met e-mailadres en wachtwoord. |
-| FE-03 | Een gebruiker kan een auto aanbieden met gegevens, adres en tarieven. |
-| FE-04 | Er zijn drie soorten auto's: ICE (brandstof), BEV (elektrisch met accu) en FCEV (waterstof). Ze hebben gedeelde gegevens en gedeelde functionaliteit. |
-| FE-05 | De eigenaar kan zijn auto wijzigen. |
-| FE-06 | De eigenaar kan zijn auto verwijderen, zolang er geen aangevraagde of goedgekeurde reserveringen in de toekomst zijn. De auto wordt niet echt verwijderd, maar op "niet actief" gezet, zodat oude reserveringen bewaard blijven. |
-| FE-07 | De eigenaar kan foto's toevoegen aan zijn auto en weer verwijderen. |
-| FE-08 | De eigenaar kan de kosten per kilometer van zijn auto laten berekenen. De berekening verschilt per soort auto. |
-| FE-09 | De eigenaar kan de TCO (totale kosten per jaar) van zijn auto laten berekenen, uitgaande van 15.000 km per jaar. |
-| FE-10 | Iedereen kan een lijst met auto's bekijken en zoeken en filteren op soort auto, plaats, maximale uurprijs en beschikbaarheid in een periode. |
-| FE-11 | Iedereen kan de details van een auto bekijken, inclusief foto's. |
-| FE-12 | Een gebruiker kan een reservering aanvragen voor een auto van een ander, met een start- en eindmoment en het verwachte aantal kilometers. |
-| FE-13 | Bij een aanvraag ziet de huurder de geschatte huurprijs: uurtarief × aantal uren + km-tarief × verwachte kilometers. Deze prijs wordt bij het aanvragen vastgelegd en verandert niet als de eigenaar later zijn tarieven aanpast. |
-| FE-14 | De eigenaar kan een aanvraag goedkeuren of afwijzen. |
-| FE-15 | Een aanvraag kan alleen worden goedgekeurd als de auto in die periode niet al is verhuurd (geen overlap met een andere goedgekeurde reservering). |
-| FE-16 | De huurder kan een reservering annuleren zolang de huurperiode nog niet is begonnen. |
-| FE-17 | Een gebruiker kan zijn eigen reserveringen bekijken. |
-| FE-18 | De eigenaar kan de aanvragen en reserveringen voor zijn auto's bekijken. |
-| FE-19 | Na goedkeuring ziet de huurder de contactgegevens van de eigenaar, zodat zij de sleuteloverdracht kunnen afspreken. |
-| FE-20 | Een AI-agent voert een afgebakend deel van de functionaliteit uit (invulling volgt in hoofdstuk 3). |
+De kolom *Status* geeft aan of een eis in de huidige versie van de software zit: ✅ gerealiseerd, 🔜 volgt in periode 2, ⏳ nog niet gerealiseerd.
+
+| Nr | Eis | Status |
+|---|---|---|
+| FE-01 | Een bezoeker kan een account aanmaken. | ✅ |
+| FE-02 | Een gebruiker kan inloggen met e-mailadres en wachtwoord. | ✅ |
+| FE-03 | Een gebruiker kan een auto aanbieden met gegevens, adres en tarieven. | ✅ |
+| FE-04 | Er zijn drie soorten auto's: ICE (brandstof), BEV (elektrisch met accu) en FCEV (waterstof). Ze hebben gedeelde gegevens en gedeelde functionaliteit. | ✅ |
+| FE-05 | De eigenaar kan zijn auto wijzigen. | ✅ |
+| FE-06 | De eigenaar kan zijn auto verwijderen, zolang er geen aangevraagde of goedgekeurde reserveringen in de toekomst zijn. De auto wordt niet echt verwijderd, maar op "niet actief" gezet, zodat oude reserveringen bewaard blijven. | ✅ |
+| FE-07 | De eigenaar kan foto's toevoegen aan zijn auto en weer verwijderen. | 🔜 Periode 2 |
+| FE-08 | De eigenaar kan de kosten per kilometer van zijn auto laten berekenen. De berekening verschilt per soort auto. | ✅ |
+| FE-09 | De eigenaar kan de TCO (totale kosten per jaar) van zijn auto laten berekenen, uitgaande van 15.000 km per jaar. | ✅ |
+| FE-10 | Iedereen kan een lijst met auto's bekijken en zoeken en filteren op soort auto, plaats, maximale uurprijs en beschikbaarheid in een periode. | ✅ Deels: filteren op beschikbaarheid volgt in periode 2 |
+| FE-11 | Iedereen kan de details van een auto bekijken, inclusief foto's. | ✅ Deels: foto's volgen in periode 2 |
+| FE-12 | Een gebruiker kan een reservering aanvragen voor een auto van een ander, met een start- en eindmoment en het verwachte aantal kilometers. | ✅ |
+| FE-13 | Bij een aanvraag ziet de huurder de geschatte huurprijs: uurtarief × aantal uren + km-tarief × verwachte kilometers. Deze prijs wordt bij het aanvragen vastgelegd en verandert niet als de eigenaar later zijn tarieven aanpast. | ✅ |
+| FE-14 | De eigenaar kan een aanvraag goedkeuren of afwijzen. | ✅ |
+| FE-15 | Een aanvraag kan alleen worden goedgekeurd als de auto in die periode niet al is verhuurd (geen overlap met een andere goedgekeurde reservering). | ✅ |
+| FE-16 | De huurder kan een reservering annuleren zolang de huurperiode nog niet is begonnen. | ✅ |
+| FE-17 | Een gebruiker kan zijn eigen reserveringen bekijken. | ✅ |
+| FE-18 | De eigenaar kan de aanvragen en reserveringen voor zijn auto's bekijken. | ✅ |
+| FE-19 | Na goedkeuring ziet de huurder de contactgegevens van de eigenaar, zodat zij de sleuteloverdracht kunnen afspreken. | ✅ |
+| FE-20 | Een AI-agent voert een afgebakend deel van de functionaliteit uit (invulling volgt in hoofdstuk 3). | ⏳ Nog niet gerealiseerd |
 
 **Regels voor een reservering:**
 - het eindmoment ligt na het startmoment;
 - een reservering duurt minimaal 1 uur;
 - het startmoment ligt in de toekomst;
-- een gebruiker kan zijn eigen auto niet reserveren.
+- een gebruiker kan zijn eigen auto niet reserveren;
+- het verwachte aantal kilometers is niet negatief.
 
 ## 1.2 Niet-functionele eisen
 
@@ -74,7 +77,7 @@ Eigenaar en huurder zijn geen aparte accounts. Eén gebruiker kan beide rollen h
 - aanschafprijs (nodig voor de TCO)
 - actief of niet actief (een verwijderde auto wordt op "niet actief" gezet)
 - eigenaar
-- foto's
+- foto's (volgt in periode 2)
 
 **Extra per soort auto**
 
@@ -161,7 +164,7 @@ Legenda: ✅ = mag, ❌ = mag niet. *Eigenaar* en *huurder* zijn ingelogde gebru
 | Toevoegen | ❌ | ✅ | – |
 | Wijzigen | ❌ | ❌ | ✅ |
 | Verwijderen (zonder toekomstige reserveringen) | ❌ | ❌ | ✅ |
-| Foto's toevoegen of verwijderen | ❌ | ❌ | ✅ |
+| Foto's toevoegen of verwijderen (periode 2) | ❌ | ❌ | ✅ |
 | Kosten per km en TCO bekijken | ❌ | ❌ | ✅ |
 
 **Reserveringen**
@@ -193,7 +196,7 @@ Legenda: ✅ = mag, ❌ = mag niet. *Eigenaar* en *huurder* zijn ingelogde gebru
 | UC-03 | Auto aanbieden | Eigenaar | US-03 |
 | UC-04 | Auto wijzigen | Eigenaar | US-04 |
 | UC-05 | Auto verwijderen | Eigenaar | US-05 |
-| UC-06 | Foto toevoegen | Eigenaar | US-06 |
+| UC-06 | Foto toevoegen *(periode 2, nog niet gerealiseerd)* | Eigenaar | US-06 |
 | UC-07 | Kosten per km en TCO bekijken | Eigenaar | US-07 |
 | UC-08 | Auto's zoeken | Bezoeker | US-08 |
 | UC-09 | Auto bekijken | Bezoeker | US-09 |
@@ -201,7 +204,7 @@ Legenda: ✅ = mag, ❌ = mag niet. *Eigenaar* en *huurder* zijn ingelogde gebru
 | UC-11 | Aanvraag goedkeuren of afwijzen | Eigenaar | US-11 |
 | UC-12 | Eigen reserveringen bekijken | Huurder | US-12, US-14 |
 | UC-13 | Reservering annuleren | Huurder | US-13 |
-| UC-14 | Advies van de AI-agent vragen | Gebruiker | US-15 |
+| UC-14 | Advies van de AI-agent vragen *(nog niet gerealiseerd)* | Gebruiker | US-15 |
 
 Hieronder zijn de belangrijkste use cases volledig uitgeschreven.
 
@@ -231,9 +234,10 @@ Hieronder zijn de belangrijkste use cases volledig uitgeschreven.
 |---|---|
 | **Actor** | Bezoeker (of gebruiker) |
 | **Voorwaarde** | Geen. |
-| **Hoofdscenario** | 1. De bezoeker vult optioneel filters in: soort auto, plaats, maximale uurprijs en een periode. <br> 2. Het systeem zoekt de actieve auto's die aan alle ingevulde filters voldoen. Bij een periode vallen auto's af die dan al een goedgekeurde reservering hebben. <br> 3. Het systeem geeft de lijst met auto's terug. |
-| **Alternatief** | 2a. Er zijn geen auto's die voldoen: het systeem geeft een lege lijst terug. <br> 2b. Een filter is ongeldig (bijvoorbeeld een periode waarvan het einde vóór het begin ligt): het systeem geeft een foutmelding (400). |
+| **Hoofdscenario** | 1. De bezoeker vult optioneel filters in: soort auto, plaats en maximale uurprijs. <br> 2. Het systeem zoekt de actieve auto's die aan alle ingevulde filters voldoen. <br> 3. Het systeem geeft de lijst met auto's terug. |
+| **Alternatief** | 2a. Er zijn geen auto's die voldoen: het systeem geeft een lege lijst terug. <br> 2b. Een filter is ongeldig (bijvoorbeeld een onbekende soort auto of een uurprijs die geen getal is): het systeem geeft een foutmelding (400). |
 | **Resultaat** | De bezoeker ziet de auto's die aan zijn wensen voldoen. |
+| **Periode 2** | Filteren op een periode (alleen auto's die dan nog vrij zijn) is nog niet gerealiseerd en volgt in periode 2. |
 
 ### UC-10 Reservering aanvragen
 
@@ -242,7 +246,7 @@ Hieronder zijn de belangrijkste use cases volledig uitgeschreven.
 | **Actor** | Huurder (ingelogde gebruiker) |
 | **Voorwaarde** | De gebruiker is ingelogd en heeft een auto gevonden. |
 | **Hoofdscenario** | 1. De huurder kiest een startmoment, een eindmoment en het verwachte aantal kilometers. <br> 2. Het systeem controleert de regels voor een reservering. <br> 3. Het systeem berekent de geschatte huurprijs. <br> 4. Het systeem slaat de reservering op met status `AANGEVRAAGD`. <br> 5. Het systeem geeft de reservering met de geschatte prijs terug. |
-| **Alternatief** | 2a. Het eindmoment ligt niet na het startmoment, de duur is korter dan 1 uur of de start ligt in het verleden: foutmelding (400). <br> 2b. De huurder probeert zijn eigen auto te reserveren: foutmelding (400). <br> 2c. De auto bestaat niet: foutmelding (404). |
+| **Alternatief** | 2a. Het eindmoment ligt niet na het startmoment, de duur is korter dan 1 uur of de start ligt in het verleden: foutmelding (400). <br> 2b. De huurder probeert zijn eigen auto te reserveren: foutmelding (400). <br> 2c. De auto bestaat niet of is niet actief: foutmelding (404). |
 | **Resultaat** | Er ligt een aanvraag die de eigenaar kan beoordelen. |
 
 ### UC-11 Aanvraag goedkeuren of afwijzen

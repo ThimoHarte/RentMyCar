@@ -30,14 +30,15 @@ Een huurder kan auto's zoeken en filteren, bijvoorbeeld op afstand of prijs, en 
 De casus is groot. Daarom maak ik onderscheid tussen wat in de backend (periode 1) komt en wat pas in de app (periode 2) wordt uitgewerkt.
 
 **Wel in de backend (periode 1):**
-- auto's beheren: toevoegen, bekijken, zoeken en filteren (op soort, plaats, prijs en beschikbaarheid), wijzigen en verwijderen;
+- auto's beheren: toevoegen, bekijken, zoeken en filteren (op soort, plaats en maximale uurprijs), wijzigen en verwijderen;
 - de kosten per kilometer en de TCO berekenen;
 - gebruikers registreren en laten inloggen;
 - reserveringen aanvragen, die de eigenaar goedkeurt of afwijst, met controle dat een auto niet twee keer voor dezelfde periode wordt verhuurd;
-- foto's van een auto uploaden;
-- een AI-agent die een deel van de functionaliteit uitvoert (de precieze invulling volgt; het taalmodel draait lokaal en is gratis).
+- een AI-agent die een deel van de functionaliteit uitvoert (de precieze invulling volgt; het taalmodel draait lokaal en is gratis). *Nog niet gerealiseerd.*
 
-**Pas in periode 2 (Android-app):**
+**Pas in periode 2:**
+- foto's van een auto uploaden, bekijken en verwijderen. Dit stond gepland voor periode 1, maar is nog niet gerealiseerd;
+- auto's zoeken op beschikbaarheid in een periode. Ook dit is nog niet gerealiseerd;
 - de plek van de auto op een kaart aanwijzen en auto's tonen op een kaart;
 - zoeken op afstand (hiervoor zijn coördinaten nodig, die in periode 2 via de kaart worden vastgelegd);
 - de looproute naar de auto;

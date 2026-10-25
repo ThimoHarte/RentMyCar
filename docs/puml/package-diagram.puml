@@ -10,29 +10,29 @@ skinparam linetype polyline
 package "server (module)" as serverModule {
 
   package "rentmycar.server" as root {
-    rectangle "Server.kt · Application.kt · Dependencies.kt\n<i>start de server en koppelt alle features</i>" as boot
+    rectangle "Server.kt · Application.kt · Dependencies.kt\nDatabaseFactory.kt · DemoData.kt\n<i>start de server en koppelt alle features</i>" as boot
   }
 
   package "rentmycar.server.reservations" as reservations {
-    rectangle "ReservationRoutes\nReservationService\nReservationRepository\n<b>Reservation</b>" as reservationsContent
+    rectangle "ReservationRoutes\nReservationService\nReservationRepository\nReservationTable\n<b>Reservation</b>" as reservationsContent
   }
 
   package "rentmycar.server.cars" as cars {
-    rectangle "CarRoutes\nCarService\nCarRepository\n<b>Car</b>, <b>IceCar</b>, <b>ElectricCar</b>,\n<b>HydrogenCar</b>, <b>Address</b>, <b>Photo</b>" as carsContent
+    rectangle "CarRoutes\nCarService\nCarRepository\nCarTable\n<b>Car</b>, <b>IceCar</b>, <b>ElectricCar</b>,\n<b>HydrogenCar</b>, <b>Address</b>" as carsContent
   }
 
   package "rentmycar.server.users" as users {
-    rectangle "UserRoutes\nUserService\nUserRepository\nPasswordHasher\nTokenService\n<b>User</b>" as usersContent
+    rectangle "UserRoutes\nUserService\nUserRepository\nUserTable\nPasswordHasher\nTokenService\n<b>User</b>" as usersContent
   }
 
   package "rentmycar.server.common" as common {
-    rectangle "Foutafhandeling (StatusPages)\nForbiddenException, ConflictException\nDatabase-setup\nCostAssumptions" as commonContent
+    rectangle "Foutafhandeling (StatusPages)\nForbiddenException, ConflictException\nHulpfuncties: CallUtils, Rounding, TimeUtils\nCostAssumptions" as commonContent
   }
 }
 
 package "core (module)" as coreModule {
   package "rentmycar.core" as core {
-    rectangle "DTO's (request en response), ApiError\nEnums: FuelType, ReservationStatus" as coreContent
+    rectangle "DTO's (request en response), ApiError\nEnums: CarType, FuelType, ReservationStatus" as coreContent
   }
 }
 

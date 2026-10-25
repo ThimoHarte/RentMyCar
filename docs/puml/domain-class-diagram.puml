@@ -19,6 +19,7 @@ class Reservation {
   + estimatedPrice: Double {readOnly}
   + status: ReservationStatus {readOnly}
   --
+  + {static} NEW_ID = 0
   + {static} request(car, renter, start, end, expectedKm, now): Reservation
   + hours(): Double
   + overlapsWith(other: Reservation): Boolean
@@ -39,7 +40,7 @@ class User {
   + name: String
   + email: String
   + passwordHash: String
-  + bonusPoints: Int
+  + bonusPoints: Int = 0
 }
 
 abstract class Car <<sealed>> {
@@ -54,9 +55,9 @@ abstract class Car <<sealed>> {
   + kmRate: Double {readOnly}
   + purchasePrice: Double {readOnly}
   + address: Address {readOnly}
-  + photos: List<Photo> {readOnly}
   + isActive: Boolean {readOnly}
   --
+  + {static} NEW_ID = 0
   + {abstract} costPerKm(): Double
   + {abstract} fixedCostsPerYear(): Double
   + tco(): Double
@@ -69,11 +70,6 @@ class Address <<data>> {
   + houseNumber: String
   + postalCode: String
   + city: String
-}
-
-class Photo {
-  + id: Int {readOnly}
-  + fileName: String {readOnly}
 }
 
 class IceCar {
@@ -119,10 +115,8 @@ Reservation "0..*" -down-> "car 1" Car
 Reservation "0..*" -down-> "renter 1" User
 Car "0..*" -left-> "owner 1" User
 
-' Composition: address and photos belong to one car
+' Composition: the address belongs to one car
 Car *-right- "address 1" Address
-Car *-right- "photos 0..*" Photo
-Address -[hidden]down- Photo
 
 ' Inheritance: three kinds of cars
 Car <|-down- IceCar
@@ -135,5 +129,9 @@ IceCar -down-> "fuelType 1" FuelType
 IceCar .down.> CostAssumptions
 ElectricCar .down.> CostAssumptions
 HydrogenCar .down.> CostAssumptions
+
+legend bottom
+  Foto's (klasse <b>Photo</b>) zijn nog niet gerealiseerd; ze worden in periode 2 toegevoegd.
+endlegend
 
 @enduml

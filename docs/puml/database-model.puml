@@ -44,13 +44,6 @@ entity "cars" as cars {
   kg_per_100km : DOUBLE <<nullable>>
 }
 
-entity "car_photos" as photos {
-  <b>id</b> : INT <<PK>>
-  --
-  <i>car_id</i> : INT <<FK>>
-  file_name : VARCHAR(255)
-}
-
 entity "reservations" as reservations {
   <b>id</b> : INT <<PK>>
   --
@@ -66,6 +59,9 @@ entity "reservations" as reservations {
 users ||--o{ cars : "owner_id"
 users ||--o{ reservations : "renter_id"
 cars ||--o{ reservations : "car_id"
-cars ||--o{ photos : "car_id"
+
+legend bottom
+  De tabel <b>car_photos</b> voor foto's volgt in periode 2.
+endlegend
 
 @enduml
